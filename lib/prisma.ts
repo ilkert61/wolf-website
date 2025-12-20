@@ -1,17 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-    // HARDCODED CONNECTION STRING (Debug)
-    const url = "mysql://wolfbilisim_wolf_user:%299RoM%3BU1%26F.I@78.142.209.112:3306/wolfbilisim_wolf_db";
-    console.log("Using HARDCODED connection string for debugging.");
-
-    return new PrismaClient({
-        datasources: {
-            db: {
-                url: url,
-            },
-        },
-    });
+    return new PrismaClient();
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
