@@ -1,0 +1,36 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
+
+export const metadata: Metadata = {
+    title: "Wolf Bilişim",
+    description: "Bilişim Firması Web Sitesi",
+    icons: {
+        icon: '/logo.png',
+    },
+};
+
+export default function RootLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
+    return (
+        <html lang="tr" className="dark" suppressHydrationWarning>
+            <body
+                className={`antialiased bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden`}
+                suppressHydrationWarning
+            >
+                <Navbar />
+                <main className="flex-grow flex flex-col relative">
+                    <PageTransition>
+                        {children}
+                    </PageTransition>
+                </main>
+                <Footer />
+            </body>
+        </html>
+    );
+}

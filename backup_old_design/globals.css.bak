@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* Optional: Keep light mode if we ever want to toggle it, but default is dark now */
+@media (prefers-color-scheme: light) {
+  /* :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  } */
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  attributes  String?   // JSON definition of attributes for this category: ["Brand", "CPU"]
+  parentId    Int?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  order       Int       @default(0)
+}
+
+model Product {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  price       Decimal
+  categoryId  Int
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  attributes      String?        // JSON values: {"Brand": "Asus", "CPU": "i5"}
+  status          String         @default("On Sale") // On Sale, Sold
+  stock           Int            @default(0)
+  originalPrice   Decimal?
+  discountEndDate DateTime?
+  isDeal          Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  isMain    Boolean  @default(false)
+  order     Int      @default(0)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+}
+
+// Elektronik Finans Başvuruları
+model FinanceApplication {
+  id             Int      @id @default(autoincrement())
+  name           String
+  phone          String
+  email          String?
+  deviceType     String   // Telefon, Laptop, Tablet, Akıllı Saat
+  brandModel     String
+  estimatedValue String?
+  message        String?
+  status         String   @default("Beklemede") // Beklemede, İnceleniyor, Onaylandı, Reddedildi
+  adminNotes     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SecondHandListing {
+  id             Int      @id @default(autoincrement())
+  personalInfo   String   // JSON: { name, surname, phone, email }
+  productInfo    String   // JSON: { brand, model, description, estimatedPrice }
+  condition      String   // SIFIR_GIBI, COK_IYI, IYI, ORTA
+  accessories    String?  // JSON array: ["Kutu", "Fatura"]
+  images         String   // JSON array of URLs
+  status         String   @default("PENDING") // PENDING, APPROVED, REJECTED, ARCHIVED
+  adminNotes     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SiteSettings {
+  id             Int      @id @default(autoincrement())
+  siteName       String   @default("Wolf Bilişim")
+  description    String?  @default("Teknoloji Çözüm Ortağınız")
+  contactEmail   String?
+  contactPhone   String?
+  address        String?
+  socialMedia    String?  // JSON: { instagram, facebook, twitter, youtube, tiktok }
+  maintenanceMode Boolean @default(false)
+  updatedAt      DateTime @updatedAt
+}
