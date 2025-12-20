@@ -4,6 +4,8 @@ import { ArrowRight, Shield, Zap, Truck, Cpu, Monitor, Headphones, Wrench, Chevr
 import prisma from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
     const deals = await prisma.product.findMany({
         where: { isDeal: true } as any,

@@ -1,0 +1,7 @@
+# Node.js uygulamasını Passenger ile çalıştır
+PassengerAppRoot "/home/wolfbilisim/public_html"
+PassengerAppType node
+PassengerStartupFile server.js
+
+# Hataları ekranda görmek için (Site açılınca kapatabilirsin)
+PassengerFriendlyErrorPages on
