@@ -1,19 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-    // Debug logging to check environment variable presence in Vercel logs
-    console.log("Initializing Prisma Client...");
-    console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
-    if (process.env.DATABASE_URL) {
-        console.log("DATABASE_URL length:", process.env.DATABASE_URL.length);
-    } else {
-        console.error("FATAL: DATABASE_URL is undefined during initialization");
-    }
+    // HARDCODED CONNECTION STRING (Debug)
+    const url = "mysql://wolfbilisim_wolf_user:%299RoM%3BU1%26F.I@78.142.209.112:3306/wolfbilisim_wolf_db";
+    console.log("Using HARDCODED connection string for debugging.");
 
     return new PrismaClient({
         datasources: {
             db: {
-                url: process.env.DATABASE_URL,
+                url: url,
             },
         },
     });
