@@ -5,10 +5,10 @@ import { verifySession } from "@/lib/auth";
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Protect /admin routes
-    if (pathname.startsWith("/admin")) {
+    // Protect /wolf-admin-1392a14 routes
+    if (pathname.startsWith("/wolf-admin-1392a14")) {
         // Allow access to login page
-        if (pathname === "/admin/login") {
+        if (pathname === "/wolf-admin-1392a14/login") {
             return NextResponse.next();
         }
 
@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
         const session = token ? await verifySession(token) : null;
 
         if (!session) {
-            return NextResponse.redirect(new URL("/admin/login", request.url));
+            return NextResponse.redirect(new URL("/wolf-admin-1392a14/login", request.url));
         }
     }
 
@@ -24,5 +24,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*"],
+    matcher: ["/wolf-admin-1392a14/:path*"],
 };

@@ -13,7 +13,7 @@ interface Category {
 
 export default function Footer() {
     const pathname = usePathname();
-    const isAdminRoute = pathname?.startsWith("/admin");
+    const isAdminRoute = pathname?.startsWith("/wolf-admin-1392a14");
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {

@@ -9,11 +9,11 @@ export default function AdminSidebar() {
     const pathname = usePathname();
 
     const menuItems = [
-        { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-        { name: "Ürünler", href: "/admin/products", icon: Package },
-        { name: "Kategoriler", href: "/admin/categories", icon: Tag },
-        { name: "Finans Başvuruları", href: "/admin/finance", icon: FileText },
-        { name: "İkinci El", href: "/admin/second-hand", icon: Smartphone },
+        { name: "Dashboard", href: "/wolf-admin-1392a14/dashboard", icon: LayoutDashboard },
+        { name: "Ürünler", href: "/wolf-admin-1392a14/products", icon: Package },
+        { name: "Kategoriler", href: "/wolf-admin-1392a14/categories", icon: Tag },
+        { name: "Finans Başvuruları", href: "/wolf-admin-1392a14/finance", icon: FileText },
+        { name: "İkinci El", href: "/wolf-admin-1392a14/second-hand", icon: Smartphone },
     ];
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");

@@ -29,7 +29,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     const prevPathname = useRef(pathname);
 
     // Skip animation for admin routes - they have their own layout
-    const isAdminRoute = pathname.startsWith("/admin");
+    const isAdminRoute = pathname.startsWith("/wolf-admin-1392a14");
 
     if (isAdminRoute) {
         return <>{children}</>;

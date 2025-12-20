@@ -10,5 +10,5 @@ export async function logoutAction() {
     } catch (error) {
         console.error("Logout error:", error);
     }
-    redirect("/admin/login");
+    redirect("/wolf-admin-1392a14/login");
 }

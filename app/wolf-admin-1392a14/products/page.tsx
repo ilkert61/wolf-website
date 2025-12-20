@@ -19,7 +19,7 @@ export default async function AdminProductsPage() {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Ürünler</h1>
                 <Link
-                    href="/admin/products/new"
+                    href="/wolf-admin-1392a14/products/new"
                     className="relative z-10 flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
                 >
                     <Plus className="w-5 h-5" />
@@ -77,7 +77,7 @@ export default async function AdminProductsPage() {
                                     <td className="p-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <Link
-                                                href={`/admin/products/${product.id}/edit`}
+                                                href={`/wolf-admin-1392a14/products/${product.id}/edit`}
                                                 className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                                             >
                                                 <Pencil className="w-4 h-4" />

@@ -134,7 +134,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
             });
 
             if (res.ok) {
-                router.push("/admin/products"); // Redirect to products list
+                router.push("/wolf-admin-1392a14/products"); // Redirect to products list
                 router.refresh();
             }
         } catch (error) {

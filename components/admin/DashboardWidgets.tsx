@@ -22,7 +22,7 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             bg: "bg-blue-400/10",
             trend: "+12%",
             trendUp: true,
-            link: "/admin/products"
+            link: "/wolf-admin-1392a14/products"
         },
         {
             title: "Bekleyen Finans",
@@ -33,7 +33,7 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             bg: "bg-green-400/10",
             trend: "Aksiyon Gerekli",
             trendUp: stats.pendingFinanceCount > 0,
-            link: "/admin/finance"
+            link: "/wolf-admin-1392a14/finance"
         },
         {
             title: "İkinci El Talep",
@@ -44,7 +44,7 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             bg: "bg-purple-400/10",
             trend: "Yeni",
             trendUp: stats.pendingSecondHandCount > 0,
-            link: "/admin/second-hand"
+            link: "/wolf-admin-1392a14/second-hand"
         },
         {
             title: "Aktif Kategoriler",
@@ -54,7 +54,7 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             bg: "bg-orange-400/10",
             trend: "Stabil",
             trendUp: true,
-            link: "/admin/categories"
+            link: "/wolf-admin-1392a14/categories"
         }
     ];
 

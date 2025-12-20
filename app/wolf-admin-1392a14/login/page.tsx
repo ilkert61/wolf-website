@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
             });
 
             if (res.ok) {
-                router.push("/admin/dashboard");
+                router.push("/wolf-admin-1392a14/dashboard");
             } else {
                 setError("Geçersiz kullanıcı adı veya şifre");
             }
