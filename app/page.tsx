@@ -4,6 +4,8 @@ import { ArrowRight, Shield, Zap, Truck, Cpu, Monitor, Headphones, Wrench, Chevr
 import prisma from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
 
+import HeroCarousel from "@/components/HeroCarousel";
+
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -17,70 +19,10 @@ export default async function Home() {
     });
 
     return (
-        <div className="flex flex-col pb-20 pt-24">
-            {/* Premium Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-24 pt-24">
-                {/* Refined Background */}
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-[#050505]" />
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-cyber-cyan/10 to-transparent blur-[120px] opacity-40" />
-                    <div className="absolute bottom-0 left-0 w-full h-[500px] bg-gradient-to-t from-background to-transparent z-10" />
-                    {/* Grid Pattern */}
-                    <div className="absolute inset-0 opacity-[0.03]"
-                        style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '50px 50px' }}
-                    />
-                </div>
-
-                <div className="container mx-auto px-4 z-10 relative">
-                    <div className="max-w-5xl mx-auto text-center">
-                        {/* Premium Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 bg-white/5 backdrop-blur-md mb-8 animate-fade-in-up">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan shadow-[0_0_10px_rgba(8,145,178,0.5)]" />
-                            <span className="text-xs font-medium text-gray-300 tracking-wide uppercase">Profesyonel Bilişim Çözümleri</span>
-                        </div>
-
-                        {/* Main Typography */}
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-[1.1]">
-                            <span className="block text-white">Teknolojinin</span>
-                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-400 to-gray-100 pb-4">
-                                Zirve Noktası
-                            </span>
-                        </h1>
-
-                        <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-                            Kurumsal altyapı çözümlerinden yüksek performanslı sistemlere kadar,
-                            <span className="text-white font-medium"> Wolf Bilişim</span> teknolojideki güvenilir ortağınız.
-                        </p>
-
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-5 justify-center mb-20">
-                            <Link href="/products" className="group relative px-8 py-4 bg-white text-black rounded-full font-semibold transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
-                                <span className="flex items-center gap-2">
-                                    Ürünleri İncele
-                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                </span>
-                            </Link>
-                            <Link href="/contact" className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 text-white font-medium transition-all hover:border-white/20">
-                                Bize Ulaşın
-                            </Link>
-                        </div>
-
-                        {/* Stats Minimal */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-12 max-w-4xl mx-auto">
-                            {[
-                                { val: "1000+", lbl: "Referans" },
-                                { val: "7/24", lbl: "Teknik Destek" },
-                                { val: "2 Yıl", lbl: "Garanti" },
-                                { val: "%100", lbl: "Müşteri Memnuniyeti" },
-                            ].map((s, i) => (
-                                <div key={i} className="text-center">
-                                    <div className="text-2xl font-bold text-white mb-1">{s.val}</div>
-                                    <div className="text-xs text-gray-500 uppercase tracking-wider">{s.lbl}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+        <div className="flex flex-col pb-10">
+            {/* New Hero Carousel Section */}
+            <section className="container mx-auto px-4 pt-20 mb-8 md:mb-12">
+                <HeroCarousel />
             </section>
 
             {/* Weekly Deals Section */}
@@ -333,9 +275,9 @@ export default async function Home() {
             {/* Final CTA */}
             <section className="container mx-auto px-4 py-16">
                 <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-black mb-6">
-                        <span className="text-white">Hayalinizdeki Sistemi </span>
-                        <span className="gradient-text">Birlikte Kuralım</span>
+                    <h2 className="text-3xl md:text-5xl font-black mb-4">
+                        <span className="text-white">Wolf Bilişim </span>
+                        <span className="gradient-text">Farkı</span>
                     </h2>
                     <p className="text-gray-400 mb-10 text-lg">
                         Uzman ekibimiz, ihtiyaçlarınıza özel çözümler sunmak için hazır.

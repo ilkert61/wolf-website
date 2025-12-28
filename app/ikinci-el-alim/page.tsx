@@ -200,7 +200,7 @@ export default function SecondHandPage() {
     }
 
     return (
-        <main className="min-h-screen pt-32 pb-20 px-4 bg-background relative overflow-hidden">
+        <main className="min-h-screen pt-24 pb-20 px-4 bg-background relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-cyber-violet/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -232,8 +232,8 @@ export default function SecondHandPage() {
                             <div key={step.id} className="flex flex-col items-center gap-2 relative z-10">
                                 {/* Circle with solid background to mask the line cleanly if transparency issue exists, otherwise transparent */}
                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-[#0f1115] ${isActive ? "border-cyber-cyan text-cyber-cyan shadow-glow-sm-cyan" :
-                                        isCompleted ? "border-cyber-emerald text-cyber-emerald" :
-                                            "border-white/10 text-gray-500"
+                                    isCompleted ? "border-cyber-emerald text-cyber-emerald" :
+                                        "border-white/10 text-gray-500"
                                     }`}>
                                     <step.icon className={`w-5 h-5 ${isActive && "animate-pulse"}`} />
                                 </div>

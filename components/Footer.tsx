@@ -34,7 +34,8 @@ export default function Footer() {
         fetchCategories();
     }, [isAdminRoute]);
 
-    if (isAdminRoute) return null;
+    const isFinanceRoute = pathname === "/elektronik-finans";
+    if (isAdminRoute || isFinanceRoute) return null;
 
     return (
         <footer className="relative border-t border-white/5 pt-20 pb-8 overflow-hidden">

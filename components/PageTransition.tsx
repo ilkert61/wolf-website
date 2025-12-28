@@ -10,7 +10,9 @@ const routes: Record<string, number> = {
     "/products": 1,
     "/services": 2,
     "/elektronik-finans": 3,
-    "/contact": 4,
+    "/cihaz-tamir": 4,
+    "/ikinci-el-alim": 5,
+    "/contact": 6,
 };
 
 function FrozenRouter({ children }: { children: React.ReactNode }) {

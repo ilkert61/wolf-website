@@ -58,16 +58,33 @@ model Admin {
 }
 
 // Elektronik Finans Başvuruları
-model FinanceApplication {
+model FinanceRequest {
   id             Int      @id @default(autoincrement())
-  name           String
+  fullName       String
   phone          String
   email          String?
-  deviceType     String   // Telefon, Laptop, Tablet, Akıllı Saat
+  deviceType     String
   brandModel     String
-  estimatedValue String?
+  deviceCondition String?
+  requestedAmount Decimal?
   message        String?
+  images         String[]
   status         String   @default("Beklemede") // Beklemede, İnceleniyor, Onaylandı, Reddedildi
+  adminNotes     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model RepairRequest {
+  id             Int      @id @default(autoincrement())
+  fullName       String
+  phone          String
+  email          String?
+  deviceType     String
+  brandModel     String
+  problemDescription String
+  mediaUrl       String?  // Video link or uploaded image path
+  status         String   @default("Beklemede")
   adminNotes     String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

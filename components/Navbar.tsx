@@ -1,87 +1,69 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronDown, ChevronRight, Home, Smartphone, Wrench, ShoppingBag, Phone, CreditCard } from "lucide-react";
 
 interface Category {
     id: number;
     name: string;
     slug: string;
-    parentId: number | null;
+    imageUrl?: string | null;
     children?: Category[];
 }
 
 export default function Navbar() {
-    const pathname = usePathname();
-    const isAdminRoute = pathname?.startsWith("/wolf-admin-1392a14");
-
     const [isOpen, setIsOpen] = useState(false);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isProductsOpen, setIsProductsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [isProductsOpen, setIsProductsOpen] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const pathname = usePathname();
+
+    const isAdminRoute = pathname?.startsWith('/admin');
+    const isAuthRoute = pathname?.startsWith('/admin/login');
 
     useEffect(() => {
-        if (isAdminRoute) return;
-
-        fetchCategories();
-
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [isAdminRoute]);
+    }, []);
 
-    const fetchCategories = async () => {
-        try {
-            const res = await fetch("/api/categories");
-            if (res.ok) {
-                const data = await res.json();
-                setCategories(buildTree(data));
-            }
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        }
-    };
-
-    const buildTree = (items: Category[]): Category[] => {
-        const itemMap = new Map<number, Category>();
-        const rootItems: Category[] = [];
-
-        items.forEach(item => {
-            // @ts-ignore: Initialize children
-            itemMap.set(item.id, { ...item, children: [] });
-        });
-
-        items.forEach(originalItem => {
-            const item = itemMap.get(originalItem.id)!;
-            if (item.parentId) {
-                const parent = itemMap.get(item.parentId);
-                if (parent) {
-                    parent.children?.push(item);
-                } else {
-                    rootItems.push(item);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/products/categories');
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
                 }
-            } else {
-                rootItems.push(item);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
             }
-        });
+        };
 
-        return rootItems;
-    };
+        fetchCategories();
+    }, []);
 
-    if (isAdminRoute) return null;
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+
+    if (isAdminRoute || isAuthRoute) return null;
+
+    // Special logic for Electronic Finance page - hide navbar
+    if (pathname === '/elektronik-finans') return null;
 
     const links = [
-        { name: "Anasayfa", href: "/" },
-        { name: "Hizmetlerimiz", href: "/services" },
-        { name: "Elektronik Finans", href: "/elektronik-finans" },
-        { name: "Cihaz Sat", href: "/ikinci-el-alim" },
-        { name: "İletişim", href: "/contact" },
+        { name: 'Anasayfa', href: '/' },
+        { name: 'Elektronik Finans', href: '/elektronik-finans', special: true, target: '_blank' },
+        { name: 'Cihaz Tamir', href: '/cihaz-tamir' },
+        { name: 'Cihaz Sat', href: '/ikinci-el-alim' },
+        { name: 'İletişim', href: '/contact' },
     ];
 
     return (
@@ -93,15 +75,15 @@ export default function Navbar() {
                 <div className="flex items-center justify-between h-20 relative">
                     {/* Logo Section */}
                     <div className="flex items-center gap-2">
-                        <Link href="/" className="flex items-center gap-4 group">
-                            <div className="relative w-24 h-24 -my-4 transition-all duration-500 group-hover:scale-105">
+                        <Link href="/" className="flex items-center gap-2 md:gap-4 group" onClick={() => setIsOpen(false)}>
+                            <div className="relative w-16 h-16 md:w-24 md:h-24 -my-4 transition-all duration-500 group-hover:scale-105">
                                 <img
                                     src="/logo.png"
                                     alt="Wolf Bilişim Logo"
-                                    className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.6)] group-hover:drop-shadow-[0_0_30px_rgba(6,182,212,0.8)] transition-all duration-500"
+                                    className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.6)] md:drop-shadow-[0_0_20px_rgba(6,182,212,0.6)] group-hover:drop-shadow-[0_0_30px_rgba(6,182,212,0.8)] transition-all duration-500"
                                 />
                             </div>
-                            <span className="text-2xl font-bold gradient-text hidden sm:block">
+                            <span className="text-xl md:text-2xl font-bold gradient-text hidden sm:block">
                                 Wolf Bilişim
                             </span>
                         </Link>
@@ -155,76 +137,111 @@ export default function Navbar() {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className="relative px-4 py-2 rounded-xl text-sm font-medium text-gray-300 transition-all duration-300 hover:text-cyber-cyan group overflow-hidden"
+                                    // @ts-ignore
+                                    target={link.target}
+                                    className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group overflow-hidden ${
+                                        // @ts-ignore
+                                        link.special
+                                            ? 'text-cyber-violet border border-cyber-violet/30 bg-cyber-violet/10 hover:bg-cyber-violet/20 shadow-[0_0_15px_-5px_rgba(139,92,246,0.5)]'
+                                            : 'text-gray-300 hover:text-cyber-cyan'
+                                        }`}
                                 >
                                     <span className="relative z-10">{link.name}</span>
-                                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-cyber transition-all duration-300 group-hover:w-3/4 rounded-full" />
+                                    {/* @ts-ignore */}
+                                    {!link.special && (
+                                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-cyber transition-all duration-300 group-hover:w-3/4 rounded-full" />
+                                    )}
                                 </Link>
                             ))}
                         </div>
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden">
+                    {/* Mobile Menu Button - Z-index fixed */}
+                    <div className="md:hidden relative z-[60]">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="inline-flex items-center justify-center p-3 rounded-xl text-gray-400 hover:text-cyber-cyan hover:bg-cyber-cyan/10 focus:outline-none transition-all border border-transparent hover:border-cyber-cyan/30"
+                            className="inline-flex items-center justify-center p-2 rounded-full text-gray-400 hover:text-cyber-cyan hover:bg-cyber-cyan/10 focus:outline-none transition-all border border-transparent"
                         >
-                            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                            {isOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            <div className={`md:hidden absolute w-full transition-all duration-500 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
-                <div className="glass border-t border-cyber-cyan/20 mx-4 mb-4 rounded-2xl overflow-hidden bg-[#050505]/95">
-                    <div className="px-4 pt-4 pb-6 space-y-2 max-h-[80vh] overflow-y-auto">
-                        <Link
-                            href="/"
-                            className="block px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:text-cyber-cyan hover:bg-cyber-cyan/10 transition-all"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            Anasayfa
-                        </Link>
+            {/* FULL SCREEN MOBILE MENU OVERLAY */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="md:hidden fixed inset-0 z-50 bg-[#050505]/95 backdrop-blur-2xl flex flex-col pt-24 px-6 overflow-y-auto"
+                    >
+                        {/* Background Decor */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-cyan/10 rounded-full blur-[100px] pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyber-violet/10 rounded-full blur-[100px] pointer-events-none" />
 
-                        <div className="px-4 py-3">
-                            <div className="text-sm font-semibold text-cyber-cyan mb-3 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-cyber-cyan pulse-glow" />
-                                Ürünler
+                        <div className="relative z-10 space-y-6 pb-12">
+                            {/* Products Section */}
+                            <div className="space-y-3">
+                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">Mağaza</h3>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Link href="/products" onClick={() => setIsOpen(false)} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all">
+                                        <ShoppingBag className="w-6 h-6 text-cyber-cyan" />
+                                        <span className="text-sm font-medium text-white">Tüm Ürünler</span>
+                                    </Link>
+                                    {categories.slice(0, 3).map(cat => (
+                                        <Link key={cat.id} href={`/products?categoryId=${cat.id}`} onClick={() => setIsOpen(false)} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all">
+                                            <div className="w-6 h-6 rounded-full bg-cyber-cyan/20 flex items-center justify-center">
+                                                <span className="w-1.5 h-1.5 bg-cyber-cyan rounded-full" />
+                                            </div>
+                                            <span className="text-sm font-medium text-white">{cat.name}</span>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="pl-4 space-y-1 border-l-2 border-cyber-cyan/30">
-                                <Link
-                                    href="/products"
-                                    className="block py-2.5 text-sm text-gray-400 hover:text-cyber-cyan transition-all"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Tüm Ürünler
-                                </Link>
-                                {categories.map((cat) => (
-                                    <MobileMenuItem key={cat.id} category={cat} onSelect={() => setIsOpen(false)} />
-                                ))}
+
+                            {/* Main Links */}
+                            <div className="space-y-2">
+                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2 mt-4">Hizmetler</h3>
+                                <div className="flex flex-col gap-2">
+                                    {links.map((link) => (
+                                        <Link
+                                            key={link.name}
+                                            href={link.href}
+                                            // @ts-ignore
+                                            target={link.target}
+                                            onClick={() => setIsOpen(false)}
+                                            className={`flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+                                                // @ts-ignore
+                                                link.special
+                                                    ? "bg-cyber-violet/10 border-cyber-violet/30 text-white"
+                                                    : "bg-white/5 border-white/5 text-gray-300 hover:text-white"
+                                                }`}
+                                        >
+                                            {link.name === "Anasayfa" && <Home className="w-5 h-5 opacity-70" />}
+                                            {link.name === "Elektronik Finans" && <CreditCard className="w-5 h-5 text-cyber-violet" />}
+                                            {link.name === "Cihaz Tamir" && <Wrench className="w-5 h-5 text-cyber-cyan" />}
+                                            {link.name === "Cihaz Sat" && <Smartphone className="w-5 h-5 text-cyber-emerald" />}
+                                            {link.name === "İletişim" && <Phone className="w-5 h-5 opacity-70" />}
+                                            {link.name === "Hizmetlerimiz" && <Wrench className="w-5 h-5 opacity-70" />}
+
+                                            <span className="font-medium text-lg">{link.name}</span>
+                                            {/* @ts-ignore */}
+                                            {link.special && <span className="ml-auto text-xs font-bold bg-cyber-violet/20 px-2 py-1 rounded text-cyber-violet">POPÜLER</span>}
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-
-                        {links.slice(1).map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className="block px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:text-cyber-cyan hover:bg-cyber-cyan/10 transition-all"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {link.name}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 }
 
-// Recursive Desktop Item
 const DesktopMenuItem = ({ category }: { category: Category }) => {
     const hasChildren = category.children && category.children.length > 0;
 
@@ -250,49 +267,6 @@ const DesktopMenuItem = ({ category }: { category: Category }) => {
                     </div>
                 </div>
             )}
-        </div>
-    );
-};
-
-// Recursive Mobile Item
-const MobileMenuItem = ({ category, onSelect }: { category: Category, onSelect: () => void }) => {
-    const hasChildren = category.children && category.children.length > 0;
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    return (
-        <div className="w-full">
-            <div className="flex items-center justify-between py-2.5 pr-2">
-                <Link
-                    href={`/products?categoryId=${category.id}`}
-                    className="text-sm text-gray-400 hover:text-cyber-emerald transition-all flex-1"
-                    onClick={() => !hasChildren && onSelect()}
-                >
-                    {category.name}
-                </Link>
-                {hasChildren && (
-                    <button
-                        onClick={(e) => { e.preventDefault(); setIsExpanded(!isExpanded); }}
-                        className="p-1 text-gray-500 hover:text-white"
-                    >
-                        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                    </button>
-                )}
-            </div>
-
-            <AnimatePresence>
-                {isExpanded && hasChildren && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden pl-4 border-l border-white/10 ml-1"
-                    >
-                        {category.children!.map((child) => (
-                            <MobileMenuItem key={child.id} category={child} onSelect={onSelect} />
-                        ))}
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 };

@@ -1,344 +1,323 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, Send, CheckCircle2, Smartphone, Laptop, Tablet, Watch, Banknote, Shield, Clock, AlertCircle } from "lucide-react";
+import { Calculator, Send, CheckCircle2, Smartphone, Laptop, Tablet, Watch, Banknote, Shield, Clock, AlertCircle, RefreshCw, Lock, ArrowRight, Upload } from "lucide-react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { submitFinanceRequest } from "@/app/actions/finance";
 
 export default function ElectronicFinancePage() {
+    const [activeTab, setActiveTab] = useState<"info" | "form">("info");
     const [formData, setFormData] = useState({
-        name: "",
+        fullName: "",
         phone: "",
         email: "",
         deviceType: "Telefon",
         brandModel: "",
-        estimatedValue: "",
+        deviceCondition: "İkinci El",
+        requestedAmount: "",
         message: ""
     });
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-    const [errors, setErrors] = useState<{ phone?: string; name?: string; brandModel?: string }>({});
+    const [statusMessage, setStatusMessage] = useState("");
 
-    // Türkiye telefon numarası validasyonu (05XX XXX XX XX formatı)
-    const validatePhone = (phone: string): boolean => {
-        const cleanPhone = phone.replace(/\s/g, "").replace(/\D/g, "");
-        // 05 ile başlamalı ve 11 hane olmalı VEYA 5 ile başlayıp 10 hane olmalı
-        const pattern = /^(05\d{9}|5\d{9})$/;
-        return pattern.test(cleanPhone);
-    };
-
-    const getPlaceholder = (type: string) => {
-        switch (type) {
-            case "Telefon": return "Örn: iPhone 13 Pro 128GB";
-            case "Laptop": return "Örn: Acer Nitro 5 AN515";
-            case "Tablet": return "Örn: iPad Air 5. Nesil 64GB";
-            case "Akıllı Saat": return "Örn: Apple Watch Series 8 45mm";
-            case "Diğer": return "Cihaz marka ve modelini belirtiniz";
-            default: return "Cihaz marka ve modeli";
-        }
-    };
-
-    const validateForm = (): boolean => {
-        const newErrors: { phone?: string; name?: string; brandModel?: string } = {};
-
-        if (!formData.name.trim()) {
-            newErrors.name = "İsim zorunludur";
-        }
-
-        if (!formData.phone.trim()) {
-            newErrors.phone = "Telefon numarası zorunludur";
-        } else if (!validatePhone(formData.phone)) {
-            newErrors.phone = "Geçerli bir telefon numarası girin (05XX XXX XX XX)";
-        }
-
-        if (!formData.brandModel.trim()) {
-            newErrors.brandModel = "Marka ve model bilgisi zorunludur";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
         setStatus("loading");
-        setErrors({});
 
-        try {
-            const res = await fetch("/api/finance-applications", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
+        const data = new FormData(e.currentTarget);
 
-            if (res.ok) {
-                setStatus("success");
-                setFormData({
-                    name: "",
-                    phone: "",
-                    email: "",
-                    deviceType: "Telefon",
-                    brandModel: "",
-                    estimatedValue: "",
-                    message: ""
-                });
-            } else {
-                setStatus("error");
-            }
-        } catch (error) {
-            console.error("Error submitting form:", error);
+        const result = await submitFinanceRequest(data);
+
+        if (result.success) {
+            setStatus("success");
+            setStatusMessage(result.message);
+            setFormData({ fullName: "", phone: "", email: "", deviceType: "Telefon", brandModel: "", deviceCondition: "İkinci El", requestedAmount: "", message: "" });
+            // Optional: convert form reset to use ref or reload if needed, but state reset covers controlled inputs.
+            // File input is uncontrolled, so we should reset the form element itself:
+            e.currentTarget.reset();
+        } else {
             setStatus("error");
+            setStatusMessage(result.message);
         }
     };
 
     return (
-        <div className="min-h-screen text-white pb-20 pt-24">
-            {/* Hero Section */}
-            <section className="relative py-16 overflow-hidden">
-                {/* Background Glows */}
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyber-emerald/15 rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyber-cyan/15 rounded-full blur-[120px] pointer-events-none" />
-
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-emerald/30 mb-6">
-                            <span className="w-2 h-2 rounded-full bg-cyber-emerald pulse-glow" />
-                            <span className="text-sm font-medium text-cyber-emerald">Hızlı ve Güvenli</span>
-                        </div>
-
-                        <h1 className="text-4xl md:text-6xl font-black mb-6">
-                            <span className="text-white">Elektronik</span>{" "}
-                            <span className="gradient-text">Finans Sistemi</span>
-                        </h1>
-                        <p className="text-xl text-gray-400 leading-relaxed">
-                            Elektronik cihazlarınızı nakite çevirin veya rehin bırakarak{" "}
-                            <span className="text-cyber-cyan font-semibold">anında finansman</span> sağlayın.
-                            Güvenli, hızlı ve değerinde işlem garantisi.
-                        </p>
+        <div className="min-h-screen text-white pb-20 bg-[#050505] relative">
+            {/* Standalone Brand Header */}
+            <div className="absolute top-0 left-0 w-full z-50 p-6 flex justify-center">
+                <div className="flex items-center gap-3 glass px-6 py-2 rounded-full border border-cyber-violet/20">
+                    <div className="relative w-8 h-8">
+                        <Image src="/logo.png" alt="Wolf Logo" fill className="object-contain" />
                     </div>
+                    <span className="font-bold text-lg tracking-wider">WOLF BİLİŞİM</span>
                 </div>
-            </section>
+            </div>
 
-            {/* Features */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        { icon: <Banknote className="w-8 h-8" />, title: "Anında Ödeme", desc: "Değerleme sonrası hemen nakit", color: "cyan" },
-                        { icon: <Shield className="w-8 h-8" />, title: "Güvenli İşlem", desc: "Cihazınız sigortalı olarak saklanır", color: "emerald" },
-                        { icon: <Clock className="w-8 h-8" />, title: "Hızlı Süreç", desc: "10 dakikada işlem tamamlanır", color: "violet" },
-                    ].map((item, i) => (
-                        <div key={i} className={`glass-card p-6 rounded-2xl transition-all duration-500 hover:border-cyber-${item.color}/50 hover:shadow-glow-${item.color}`}>
-                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br from-${item.color}-500/20 to-${item.color}-500/5 flex items-center justify-center mb-4 text-cyber-${item.color}`}>
-                                {item.icon}
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                            <p className="text-gray-400 text-sm">{item.desc}</p>
-                        </div>
-                    ))}
+            {/* Custom Header for Finance Microsite */}
+            <div className="relative h-[400px] w-full overflow-hidden flex items-center justify-center mb-12">
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-[#050505]/80 to-[#050505] z-10" />
+                <Image
+                    src="/finance-concept.png"
+                    alt="Elektronik Finans"
+                    fill
+                    className="object-cover opacity-60"
+                    priority
+                />
+                <div className="relative z-20 text-center max-w-4xl px-4">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight">
+                            <span className="text-white">WOLF</span> <span className="text-cyber-violet">FİNANS</span>
+                        </h1>
+                        <p className="text-xl md:text-2xl text-gray-300 font-light max-w-2xl mx-auto">
+                            Elektronik cihazlarınız artık sizin için birer <span className="text-cyber-green font-semibold">nakit kaynağı</span>.
+                        </p>
+                    </motion.div>
                 </div>
-            </section>
+            </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Info Section */}
-                    <div className="space-y-10">
-                        <div className="glass-card p-8 rounded-3xl">
-                            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 flex items-center justify-center">
-                                    <Calculator className="w-6 h-6 text-cyber-cyan" />
-                                </div>
-                                Nasıl Çalışır?
-                            </h2>
-                            <div className="space-y-6 text-gray-400">
-                                <p className="leading-relaxed">
-                                    Elektronik Finans Sistemi, acil nakit ihtiyaçlarınızda elektronik cihazlarınızı
-                                    teminat olarak kullanarak finansman sağlayan bir hizmettir.
-                                </p>
-                                <div className="glass p-6 rounded-2xl">
-                                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-cyber-cyan" />
-                                        Örnek Hesaplama
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                            <span>Cihaz Değeri:</span>
-                                            <span className="text-xl font-bold gradient-text-cyan">10.000 TL</span>
-                                        </div>
-                                        <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                            <span>Geri Alma Tutarı:</span>
-                                            <span className="text-xl font-bold text-white">12.000 TL</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-sm">
-                                            <span>İşlem Oranı:</span>
-                                            <span className="px-3 py-1 rounded-full bg-cyber-emerald/20 text-cyber-emerald font-semibold">%20</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="glass-card p-8 rounded-3xl">
-                            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                                <span className="w-3 h-3 rounded-full bg-gradient-cyber" />
-                                Kabul Edilen Cihazlar
-                            </h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                {[
-                                    { icon: Smartphone, label: "Akıllı Telefonlar", color: "cyan" },
-                                    { icon: Laptop, label: "Laptop / PC", color: "violet" },
-                                    { icon: Tablet, label: "Tabletler", color: "emerald" },
-                                    { icon: Watch, label: "Akıllı Saatler", color: "rose" },
-                                ].map((item, i) => (
-                                    <div key={i} className={`flex items-center gap-4 p-4 glass rounded-xl hover:border-cyber-${item.color}/40 transition-all duration-300 group`}>
-                                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-${item.color}-500/20 to-${item.color}-500/5 flex items-center justify-center text-cyber-${item.color} group-hover:scale-110 transition-transform`}>
-                                            <item.icon className="w-5 h-5" />
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-300">{item.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Form Section */}
-                    <div className="glass-card p-8 rounded-3xl">
-                        <h2 className="text-2xl font-bold mb-2">Fiyat Teklifi Alın</h2>
-                        <p className="text-gray-400 mb-8">Formu doldurun, size özel teklifimizi sunalım.</p>
-
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Ad Soyad *</label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className={`w-full glass rounded-xl px-4 py-3 focus:outline-none transition-colors bg-surface-dark/50 ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-cyber-cyan'}`}
-                                        placeholder="Adınız Soyadınız"
-                                    />
-                                    {errors.name && (
-                                        <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
-                                            <AlertCircle className="w-4 h-4" />
-                                            {errors.name}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Telefon *</label>
-                                    <input
-                                        type="tel"
-                                        value={formData.phone}
-                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                        className={`w-full glass rounded-xl px-4 py-3 focus:outline-none transition-colors bg-surface-dark/50 ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-cyber-cyan'}`}
-                                        placeholder="05XX XXX XX XX"
-                                    />
-                                    {errors.phone && (
-                                        <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
-                                            <AlertCircle className="w-4 h-4" />
-                                            {errors.phone}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">E-mail</label>
-                                <input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full glass border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyber-cyan transition-colors bg-surface-dark/50"
-                                    placeholder="email@ornek.com (isteğe bağlı)"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Cihaz Türü</label>
-                                    <select
-                                        value={formData.deviceType}
-                                        onChange={(e) => setFormData({ ...formData, deviceType: e.target.value })}
-                                        className="w-full glass border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyber-cyan transition-colors bg-surface-dark"
-                                    >
-                                        <option value="Telefon">Telefon</option>
-                                        <option value="Laptop">Laptop</option>
-                                        <option value="Tablet">Tablet</option>
-                                        <option value="Akıllı Saat">Akıllı Saat</option>
-                                        <option value="Diğer">Diğer</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Tahmini Değer (TL)</label>
-                                    <input
-                                        type="number"
-                                        value={formData.estimatedValue}
-                                        onChange={(e) => setFormData({ ...formData, estimatedValue: e.target.value })}
-                                        className="w-full glass border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyber-cyan transition-colors bg-surface-dark/50"
-                                        placeholder="Örn: 15000"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Marka / Model *</label>
-                                <input
-                                    type="text"
-                                    value={formData.brandModel}
-                                    onChange={(e) => setFormData({ ...formData, brandModel: e.target.value })}
-                                    className={`w-full glass rounded-xl px-4 py-3 focus:outline-none transition-colors bg-surface-dark/50 ${errors.brandModel ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-cyber-cyan'}`}
-                                    placeholder={getPlaceholder(formData.deviceType)}
-                                />
-                                {errors.brandModel && (
-                                    <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
-                                        <AlertCircle className="w-4 h-4" />
-                                        {errors.brandModel}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Mesajınız / Ek Açıklama</label>
-                                <textarea
-                                    rows={4}
-                                    value={formData.message}
-                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full glass border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyber-cyan transition-colors resize-none bg-surface-dark/50"
-                                ></textarea>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={status === "loading" || status === "success"}
-                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2
-                                    ${status === "success"
-                                        ? "bg-cyber-emerald text-surface-dark shadow-glow-emerald"
-                                        : "cyber-button"
-                                    }`}
-                            >
-                                {status === "loading" && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                                {status === "success" ? (
-                                    <>
-                                        <CheckCircle2 className="w-6 h-6" />
-                                        <span>Başarıyla Gönderildi</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send className="w-5 h-5" />
-                                        <span>Teklif Al</span>
-                                    </>
-                                )}
-                            </button>
-
-                            {status === "success" && (
-                                <p className="text-cyber-emerald text-center text-sm mt-2">
-                                    Talebiniz alınmıştır. En kısa sürede sizinle iletişime geçeceğiz.
-                                </p>
-                            )}
-                        </form>
+                {/* Tab Navigation */}
+                <div className="flex justify-center mb-16">
+                    <div className="glass p-1.5 rounded-2xl inline-flex gap-2">
+                        <button
+                            onClick={() => setActiveTab("info")}
+                            className={`px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "info"
+                                ? "bg-cyber-violet text-white shadow-glow-violet"
+                                : "text-gray-400 hover:text-white"
+                                }`}
+                        >
+                            <Shield className="w-5 h-5" />
+                            Sistem Nasıl Çalışır?
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("form")}
+                            className={`px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "form"
+                                ? "bg-cyber-green text-black shadow-glow-green"
+                                : "text-gray-400 hover:text-white"
+                                }`}
+                        >
+                            <Calculator className="w-5 h-5" />
+                            Fiyat Teklifi Al
+                        </button>
                     </div>
                 </div>
+
+                <AnimatePresence mode="wait">
+                    {activeTab === "info" ? (
+                        <motion.div
+                            key="info"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="space-y-20"
+                        >
+                            {/* Infographic Description Section */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                                <div className="space-y-8">
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-violet/30">
+                                        <Lock className="w-4 h-4 text-cyber-violet" />
+                                        <span className="text-sm font-medium text-cyber-violet">WOLF FİNANS SİSTEMİ</span>
+                                    </div>
+                                    <h2 className="text-4xl font-bold">
+                                        Satmak Zorunda Değilsiniz.<br />
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-violet to-cyber-cyan">
+                                            Finansman Sağlayın, Geri Alın.
+                                        </span>
+                                    </h2>
+                                    <div className="space-y-6">
+                                        <div className="flex gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-cyber-violet/10 flex items-center justify-center shrink-0">
+                                                <Smartphone className="w-6 h-6 text-cyber-violet" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white mb-2">1. Cihazınızı Getirin</h3>
+                                                <p className="text-gray-400">Telefon, laptop veya tabletiniz uzman ekibimiz tarafından değerinde ekspertiz edilir.</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-cyber-green/10 flex items-center justify-center shrink-0">
+                                                <Banknote className="w-6 h-6 text-cyber-green" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white mb-2">2. Nakit Ödeme Alın</h3>
+                                                <p className="text-gray-400">Belirlenen finansman tutarı anında nakit veya havale olarak size ödenir. Cihazınız <span className="text-white font-semibold">Wolf Bilişim Kasası</span>'nda güvenle saklanır.</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-cyber-cyan/10 flex items-center justify-center shrink-0">
+                                                <RefreshCw className="w-6 h-6 text-cyber-cyan" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white mb-2">3. Geri Teslim Alın</h3>
+                                                <p className="text-gray-400">Anlaşılan süre sonunda ödemeyi yaparak cihazınızı aynı kondisyonda geri teslim alırsınız.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="relative h-[600px] w-full rounded-3xl overflow-hidden glass border border-white/10 group">
+                                    <Image
+                                        src="/finance-concept.png"
+                                        alt="Elektronik Finans Sistemi"
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    {/* Overlay Text Details (HTML on top of Image) */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80" />
+
+                                    <div className="absolute bottom-8 left-8 right-8">
+                                        <div className="glass p-6 rounded-2xl border-l-4 border-cyber-green">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="relative w-8 h-8">
+                                                    <Image src="/logo.png" alt="Wolf Logo" fill className="object-contain" />
+                                                </div>
+                                                <span className="font-black text-lg tracking-wider">WOLF BİLİŞİM</span>
+                                            </div>
+                                            <p className="text-gray-300 text-sm leading-relaxed">
+                                                Cihazlarınız özel güvenlikli kasalarımızda, 7/24 kamera sistemi ile izlenen ortamda, sigortalı olarak saklanmaktadır. Veri gizliliğiniz %100 güvence altındadır.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="form"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                        >
+                            <div className="max-w-3xl mx-auto glass-card p-8 md:p-12 rounded-[2rem] border border-cyber-green/20 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-green/10 rounded-full blur-[100px] pointer-events-none" />
+
+                                <h2 className="text-3xl font-bold mb-2 text-center">Hızlı Fiyat Teklifi</h2>
+                                <p className="text-gray-400 text-center mb-10">Formu doldurun, cihazınız için en iyi teklifi sunalım.</p>
+
+                                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                                    {/* Personal Info */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Ad Soyad</label>
+                                            <input
+                                                name="fullName"
+                                                required
+                                                type="text"
+                                                value={formData.fullName}
+                                                onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Telefon</label>
+                                            <input
+                                                name="phone"
+                                                required
+                                                type="tel"
+                                                value={formData.phone}
+                                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Device Info */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Cihaz Türü</label>
+                                            <select
+                                                name="deviceType"
+                                                value={formData.deviceType}
+                                                onChange={e => setFormData({ ...formData, deviceType: e.target.value })}
+                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40 text-gray-300"
+                                            >
+                                                <option value="Telefon">Telefon</option>
+                                                <option value="Laptop">Laptop</option>
+                                                <option value="Tablet">Tablet</option>
+                                                <option value="Konsol">Oyun Konsolu</option>
+                                                <option value="Diğer">Diğer</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-gray-400">Marka / Model</label>
+                                            <input
+                                                name="brandModel"
+                                                required
+                                                type="text"
+                                                value={formData.brandModel}
+                                                onChange={e => setFormData({ ...formData, brandModel: e.target.value })}
+                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                                placeholder="Örn: iPhone 14 Pro Max"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Additional Info */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-400">Talep Ettiğiniz Tutar (TL)</label>
+                                        <input
+                                            name="requestedAmount"
+                                            type="number"
+                                            value={formData.requestedAmount}
+                                            onChange={e => setFormData({ ...formData, requestedAmount: e.target.value })}
+                                            className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                            placeholder="Örn: 25000"
+                                        />
+                                    </div>
+
+                                    {/* Photo Upload */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-400 flex items-center justify-between">
+                                            <span>Fotoğraflar</span>
+                                            <span className="text-[10px] bg-cyber-green/20 text-cyber-green px-2 py-0.5 rounded">OPSİYONEL</span>
+                                        </label>
+                                        <label className="relative flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-cyber-green/50 hover:bg-cyber-green/5 transition-all group/upload">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <Upload className="w-6 h-6 text-gray-400 mb-2 group-hover/upload:text-cyber-green transition-colors" />
+                                                <p className="text-xs text-gray-500 group-hover/upload:text-gray-300">Cihaz fotoğraflarını eklemek için tıklayın</p>
+                                            </div>
+                                            <input name="photos" type="file" multiple accept="image/*" className="hidden" />
+                                        </label>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={status === "loading" || status === "success"}
+                                        className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 hover:scale-[1.02]
+                                            ${status === "success"
+                                                ? "bg-green-600 text-white"
+                                                : "bg-cyber-violet text-white hover:bg-violet-600 shadow-lg shadow-cyber-violet/20"
+                                            }`}
+                                    >
+                                        {status === "loading" ? (
+                                            <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                        ) : status === "success" ? (
+                                            <>
+                                                <CheckCircle2 className="w-6 h-6" />
+                                                Başvuru Alındı
+                                            </>
+                                        ) : (
+                                            <>
+                                                Teklifi Gönder
+                                                <Send className="w-5 h-5" />
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {statusMessage && (
+                                        <p className={`text-center text-sm mt-4 ${status === "success" ? "text-green-400" : "text-red-400"}`}>
+                                            {statusMessage}
+                                        </p>
+                                    )}
+                                </form>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
