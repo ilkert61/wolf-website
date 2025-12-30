@@ -8,11 +8,11 @@ import { LayoutRouterContext } from "next/dist/shared/lib/app-router-context.sha
 const routes: Record<string, number> = {
     "/": 0,
     "/products": 1,
-    "/services": 2,
-    "/elektronik-finans": 3,
-    "/cihaz-tamir": 4,
-    "/ikinci-el-alim": 5,
-    "/contact": 6,
+    "/elektronik-finans": 2,
+    "/teknik-servis": 3,
+    "/cihaz-tamir": 3, // Legacy or alternative route keeps same index
+    "/ikinci-el-alim": 4,
+    "/contact": 5,
 };
 
 function FrozenRouter({ children }: { children: React.ReactNode }) {
