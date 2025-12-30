@@ -20,8 +20,9 @@ async function updateStatus(formData: FormData) {
     redirect("/wolf-admin-1392a14/repairs");
 }
 
-export default async function RepairDetailPage({ params }: { params: { id: string } }) {
-    const id = Number(params.id);
+export default async function RepairDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: idStr } = await params;
+    const id = Number(idStr);
     // @ts-ignore
     const request = await prisma.repairRequest.findUnique({
         where: { id },
