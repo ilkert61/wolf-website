@@ -58,7 +58,7 @@ export default function ElectronicFinancePage() {
             <div className="relative h-[400px] w-full overflow-hidden flex items-center justify-center mb-12">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-[#050505]/80 to-[#050505] z-10" />
                 <Image
-                    src="/finance-concept.png"
+                    src="/finance-concept-premium.png"
                     alt="Elektronik Finans"
                     fill
                     className="object-cover opacity-60"
@@ -158,10 +158,34 @@ export default function ElectronicFinancePage() {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Pricing Example */}
+                                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                            <Calculator className="w-5 h-5 text-cyber-green" />
+                                            Örnek Geri Alım Hesaplaması
+                                        </h3>
+                                        <div className="flex flex-col sm:flex-row gap-6 items-center">
+                                            <div className="flex-1 text-center sm:text-left">
+                                                <p className="text-gray-400 text-sm mb-1">Cihaz Değeri (Nakit Ödeme)</p>
+                                                <p className="text-2xl font-bold text-white">10.000 ₺</p>
+                                            </div>
+                                            <div className="hidden sm:block text-gray-500">
+                                                <ArrowRight className="w-6 h-6" />
+                                            </div>
+                                            <div className="flex-1 text-center sm:text-left">
+                                                <p className="text-gray-400 text-sm mb-1">Geri Alış Bedeli (%15-20 Farkla)</p>
+                                                <p className="text-2xl font-bold text-cyber-green">11.500 ₺ - 12.000 ₺</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-4 leading-relaxed">
+                                            * Fiyatlar cihazın kondisyonuna, piyasa koşullarına ve vade süresine göre değişiklik gösterebilir.
+                                        </p>
+                                    </div>
                                 </div>
                                 <div className="relative h-[600px] w-full rounded-3xl overflow-hidden glass border border-white/10 group">
                                     <Image
-                                        src="/finance-concept.png"
+                                        src="/finance-concept-premium.png"
                                         alt="Elektronik Finans Sistemi"
                                         fill
                                         className="object-cover group-hover:scale-105 transition-transform duration-700"

@@ -21,8 +21,8 @@ export default function Navbar() {
     const [categories, setCategories] = useState<Category[]>([]);
     const pathname = usePathname();
 
-    const isAdminRoute = pathname?.startsWith('/admin');
-    const isAuthRoute = pathname?.startsWith('/admin/login');
+    const isAdminRoute = pathname?.startsWith('/wolf-admin-1392a14');
+    const isAuthRoute = pathname?.startsWith('/wolf-admin-1392a14/login');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -61,7 +61,7 @@ export default function Navbar() {
     const links = [
         { name: 'Anasayfa', href: '/' },
         { name: 'Elektronik Finans', href: '/elektronik-finans', special: true, target: '_blank' },
-        { name: 'Cihaz Tamir', href: '/cihaz-tamir' },
+        { name: 'Teknik Servis', href: '/teknik-servis' },
         { name: 'Cihaz Sat', href: '/ikinci-el-alim' },
         { name: 'İletişim', href: '/contact' },
     ];
@@ -222,7 +222,7 @@ export default function Navbar() {
                                         >
                                             {link.name === "Anasayfa" && <Home className="w-5 h-5 opacity-70" />}
                                             {link.name === "Elektronik Finans" && <CreditCard className="w-5 h-5 text-cyber-violet" />}
-                                            {link.name === "Cihaz Tamir" && <Wrench className="w-5 h-5 text-cyber-cyan" />}
+                                            {link.name === "Teknik Servis" && <Wrench className="w-5 h-5 text-cyber-cyan" />}
                                             {link.name === "Cihaz Sat" && <Smartphone className="w-5 h-5 text-cyber-emerald" />}
                                             {link.name === "İletişim" && <Phone className="w-5 h-5 opacity-70" />}
                                             {link.name === "Hizmetlerimiz" && <Wrench className="w-5 h-5 opacity-70" />}

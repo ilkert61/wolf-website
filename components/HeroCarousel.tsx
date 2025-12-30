@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight, Truck, Wallet, Recycle } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Truck, Wallet, Recycle, Building2, Wrench } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -36,6 +36,26 @@ const slides = [
         ctaText: "Teklif Al",
         ctaLink: "/ikinci-el-alim",
         accentColor: "#10b981" // emerald-500
+    },
+    {
+        id: 4,
+        title: "Kurumsal Teknik Servis",
+        description: "Kurumsal şirketlere özel profesyonel teknik servis ve bakım anlaşmaları.",
+        bgImage: "/hero-bg-corporate-service.png",
+        icon: Building2,
+        ctaText: "Kurumsal Teklif",
+        ctaLink: "/teknik-servis",
+        accentColor: "#6366f1" // indigo-500
+    },
+    {
+        id: 5,
+        title: "Cihaz Tamir",
+        description: "Arızalı cihazlarınız uzman ellerde. Garantili tamir ve hızlı teslimat.",
+        bgImage: "/hero-bg-device-repair.png",
+        icon: Wrench,
+        ctaText: "Tamir Talebi",
+        ctaLink: "/teknik-servis",
+        accentColor: "#06b6d4" // cyan-500
     }
 ];
 

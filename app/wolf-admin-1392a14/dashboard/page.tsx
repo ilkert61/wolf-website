@@ -75,7 +75,7 @@ export default async function AdminDashboard() {
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Link
-                            href="/admin/products/new"
+                            href="/wolf-admin-1392a14/products/new"
                             className="bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all group border border-white/5 hover:border-blue-500/30"
                         >
                             <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -86,7 +86,7 @@ export default async function AdminDashboard() {
                         </Link>
 
                         <Link
-                            href="/admin/finance"
+                            href="/wolf-admin-1392a14/finance"
                             className="bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all group border border-white/5 hover:border-green-500/30"
                         >
                             <div className="relative w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -117,7 +117,7 @@ export default async function AdminDashboard() {
                             {recentProducts.map((product: any) => (
                                 <Link
                                     key={product.id}
-                                    href={`/admin/products/${product.id}/edit`}
+                                    href={`/wolf-admin-1392a14/products/${product.id}/edit`}
                                     className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/10 transition-all group"
                                 >
                                     <div className="flex items-center gap-3">

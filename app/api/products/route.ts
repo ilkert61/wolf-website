@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -91,6 +92,12 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+    // Session protection - only authenticated admins can create products
+    const session = await getSession();
+    if (!session) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     try {
         const body = await request.json();
         const { title, description, price, originalPrice, stock, isDeal, categoryId, images, attributes, status } = body;

@@ -47,7 +47,7 @@ export async function submitFinanceRequest(formData: FormData) {
             },
         })
 
-        revalidatePath('/admin/requests/finance')
+        revalidatePath('/wolf-admin-1392a14/requests/finance')
         return { success: true, message: 'Başvurunuz başarıyla alındı.' }
     } catch (error) {
         console.error('Finance Request Error:', error)

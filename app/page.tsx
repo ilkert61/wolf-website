@@ -58,7 +58,7 @@ export default async function Home() {
 
             {/* Quick Links */}
             <section className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                         { name: "Hazır Sistemler", href: "/products", icon: <Monitor className="w-6 h-6" />, color: "cyan" },
                         { name: "Teknik Servis", href: "/services", icon: <Wrench className="w-6 h-6" />, color: "emerald" },
@@ -83,35 +83,7 @@ export default async function Home() {
                 </div>
             </section>
 
-            {/* Features Section */}
-            <section className="container mx-auto px-4 py-16">
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-violet/30 mb-6">
-                        <Zap className="w-4 h-4 text-cyber-violet" />
-                        <span className="text-sm font-medium text-cyber-violet">Neden Biz?</span>
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-black mb-4">
-                        <span className="text-white">Wolf Bilişim </span>
-                        <span className="gradient-text">Farkı</span>
-                    </h2>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        { icon: <Zap className="w-8 h-8" />, title: "Yüksek Performans", desc: "En son teknoloji bileşenlerle maksimum performans." },
-                        { icon: <Shield className="w-8 h-8" />, title: "Kapsamlı Garanti", desc: "Tüm sistemlerde 2 yıl garanti ve ömür boyu destek." },
-                        { icon: <Truck className="w-8 h-8" />, title: "Hızlı Teslimat", desc: "Türkiye'nin her yerine sigortalı kargo hizmeti." },
-                    ].map((feature, index) => (
-                        <div key={index} className="group glass-card p-8 rounded-3xl hover:border-cyber-cyan/30 transition-all duration-300">
-                            <div className="w-16 h-16 rounded-2xl bg-surface-medium flex items-center justify-center mb-6 text-cyber-cyan group-hover:scale-110 transition-transform">
-                                {feature.icon}
-                            </div>
-                            <h3 className="text-xl font-bold mb-3 text-white">{feature.title}</h3>
-                            <p className="text-gray-400 leading-relaxed">{feature.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
 
             {/* Premium Category Grid */}
             <section className="container mx-auto px-4 py-16">

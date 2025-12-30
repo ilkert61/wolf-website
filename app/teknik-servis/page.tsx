@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Wrench, PlayCircle, Upload, CheckCircle2, AlertTriangle, Check, Smartphone, Laptop, Tablet, Gamepad2, HelpCircle } from "lucide-react";
+import { Wrench, PlayCircle, Upload, CheckCircle2, AlertTriangle, Check, Smartphone, Laptop, Tablet, Gamepad2, HelpCircle, Building2, ArrowRight } from "lucide-react";
 import { submitRepairRequest } from "@/app/actions/repair";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -102,6 +102,21 @@ export default function RepairPage() {
                                     <h3 className="font-bold text-gray-300 group-hover:text-white">{item.label}</h3>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Corporate Solutions Info */}
+                        <div className="mt-8 p-6 rounded-2xl bg-gradient-to-r from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 backdrop-blur-sm">
+                            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                <Building2 className="w-5 h-5 text-indigo-400" />
+                                Kurumsal Çözümler
+                            </h3>
+                            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                                Şirketiniz için toplu cihaz bakımı ve teknik servis anlaşmaları mı arıyorsunuz?
+                                Kurumsal müşterilerimize özel avantajlı tekliflerimiz için iletişime geçin.
+                            </p>
+                            <a href="/contact" className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-300 hover:text-white transition-colors">
+                                İletişime Geç <ArrowRight className="w-4 h-4" />
+                            </a>
                         </div>
                     </div>
 

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { processAndSaveImage } from "@/lib/image-upload";
 
 export async function POST(request: Request) {
+    // Session protection - only authenticated admins can upload
     const session = await getSession();
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,22 +17,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
+        // Use secure image processing with validation
+        const result = await processAndSaveImage(file, "products");
 
-        // Create unique filename
-        const filename = `${Date.now()}-${file.name.replace(/\s/g, "-")}`;
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
+        }
 
-        // Ensure directory exists (optional, but good practice. public/uploads should exist)
-        // For now assuming public/uploads exists or we create it.
-        // fs.mkdir(uploadDir, { recursive: true }) is async but we need to import fs/promises.
-        // I'll assume standard public folder structure.
-
-        const filepath = path.join(uploadDir, filename);
-        await writeFile(filepath, buffer);
-
-        return NextResponse.json({ url: `/uploads/${filename}` });
+        return NextResponse.json({ url: result.url });
     } catch (error) {
         console.error("Upload error:", error);
         return NextResponse.json(

@@ -51,7 +51,7 @@ export async function submitRepairRequest(formData: FormData) {
             },
         })
 
-        revalidatePath('/admin/requests/repair')
+        revalidatePath('/wolf-admin-1392a14/requests/repair')
         return { success: true, message: 'Tamir talebiniz başarıyla alındı.' }
     } catch (error) {
         console.error('Repair Request Error:', error)
