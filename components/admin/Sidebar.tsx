@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Tag, FileText, LogOut, Smartphone, Settings, Users } from "lucide-react";
+import { LayoutDashboard, Package, Tag, FileText, LogOut, Smartphone, Settings, Users, Wrench } from "lucide-react";
 import { logoutAction } from "@/app/actions";
 
 export default function AdminSidebar() {
@@ -12,6 +12,7 @@ export default function AdminSidebar() {
         { name: "Dashboard", href: "/wolf-admin-1392a14/dashboard", icon: LayoutDashboard },
         { name: "Ürünler", href: "/wolf-admin-1392a14/products", icon: Package },
         { name: "Kategoriler", href: "/wolf-admin-1392a14/categories", icon: Tag },
+        { name: "Teknik Servis", href: "/wolf-admin-1392a14/repairs", icon: Wrench },
         { name: "Finans Başvuruları", href: "/wolf-admin-1392a14/finance", icon: FileText },
         { name: "İkinci El", href: "/wolf-admin-1392a14/second-hand", icon: Smartphone },
     ];

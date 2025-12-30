@@ -47,7 +47,8 @@ export async function submitRepairRequest(formData: FormData) {
                 deviceType,
                 brandModel,
                 problemDescription,
-                mediaUrl: finalMediaUrl || null,
+                mediaUrl: mediaUrl || null,
+                images: photoPaths,
             },
         })
 

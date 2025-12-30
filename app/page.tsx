@@ -61,7 +61,7 @@ export default async function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                         { name: "Hazır Sistemler", href: "/products", icon: <Monitor className="w-6 h-6" />, color: "cyan" },
-                        { name: "Teknik Servis", href: "/services", icon: <Wrench className="w-6 h-6" />, color: "emerald" },
+                        { name: "Teknik Servis", href: "/teknik-servis", icon: <Wrench className="w-6 h-6" />, color: "emerald" },
                         { name: "Elektronik Finans", href: "/elektronik-finans", icon: <Cpu className="w-6 h-6" />, color: "violet" },
                         { name: "İletişim", href: "/contact", icon: <Headphones className="w-6 h-6" />, color: "rose" },
                     ].map((item, index) => (
@@ -220,7 +220,7 @@ export default async function Home() {
                                 Bilgisayar tamir, bakım, donanım yükseltme ve özel PC toplama hizmetlerimizle
                                 tüm teknoloji ihtiyaçlarınıza çözüm sunuyoruz.
                             </p>
-                            <Link href="/services" className="cyber-button inline-flex items-center gap-2">
+                            <Link href="/teknik-servis" className="cyber-button inline-flex items-center gap-2">
                                 <span>Hizmetlerimiz</span> <ArrowRight className="w-5 h-5" />
                             </Link>
                         </div>
