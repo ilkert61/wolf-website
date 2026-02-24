@@ -209,7 +209,7 @@ export default async function Home() {
                             href="https://wa.me/905343398185"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="premium-button text-slate-900 bg-white hover:bg-slate-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 border border-slate-200 dark:border-white/10"
+                            className="inline-flex items-center justify-center px-8 py-4 rounded-full font-bold transition-all duration-300 bg-[#25D366] text-white hover:bg-[#128C7E] shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:shadow-[0_0_25px_rgba(37,211,102,0.5)] border border-transparent"
                         >
                             WhatsApp Destek
                         </a>
