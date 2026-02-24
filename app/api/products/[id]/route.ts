@@ -55,7 +55,7 @@ export async function PUT(
 
     try {
         const body = await request.json();
-        const { title, description, price, originalPrice, stock, isDeal, categoryId, images, attributes, status } = body;
+        const { title, description, price, basePrice, currency, exchangeRateUsed, originalPrice, stock, isDeal, categoryId, images, attributes, status, metaTitle, metaDescription, keywords } = body;
 
         // Transaction to handle product update and images
         // @ts-ignore: Stale Prisma types causing inference issues
@@ -67,12 +67,18 @@ export async function PUT(
                     title,
                     description,
                     price: price ? Number(price) : undefined,
-                    originalPrice: originalPrice ? Number(originalPrice) : null,
+                    basePrice: basePrice !== undefined ? (basePrice ? Number(basePrice) : null) : undefined,
+                    currency: currency !== undefined ? currency : undefined,
+                    exchangeRateUsed: exchangeRateUsed !== undefined ? (exchangeRateUsed ? Number(exchangeRateUsed) : null) : undefined,
+                    originalPrice: originalPrice !== undefined ? (originalPrice ? Number(originalPrice) : null) : undefined,
                     stock: stock !== undefined ? Number(stock) : undefined,
                     isDeal: isDeal !== undefined ? isDeal : undefined,
                     categoryId: categoryId ? Number(categoryId) : undefined,
                     attributes: attributes ? JSON.stringify(attributes) : undefined,
                     status,
+                    metaTitle: metaTitle !== undefined ? metaTitle : undefined,
+                    metaDescription: metaDescription !== undefined ? metaDescription : undefined,
+                    keywords: keywords !== undefined ? keywords : undefined,
                 },
             });
 
@@ -98,6 +104,9 @@ export async function PUT(
 
             return updatedProduct;
         });
+
+        // Optionally create a PriceLog if basePrice or currency changed manually, but the general sync does that.
+        // For manual edits, we could add logs, but that's an advanced audit trail feature. We'll skip manual price log for now unless requested.
 
         return NextResponse.json(product);
     } catch (error) {
@@ -125,6 +134,14 @@ export async function DELETE(
     }
 
     try {
+        // Logging the delete to ActivityLog
+        await prisma.activityLog.create({
+            data: {
+                action: "Ürün Silindi",
+                details: `Ürün ID: ${id} silindi.`
+            }
+        });
+
         await prisma.product.delete({
             where: { id },
         });

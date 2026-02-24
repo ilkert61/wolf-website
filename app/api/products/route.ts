@@ -84,6 +84,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json(filteredProducts);
     } catch (error) {
+        console.error("[Products GET Error]:", error);
         return NextResponse.json(
             { error: "Error fetching products" },
             { status: 500 }
@@ -100,7 +101,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { title, description, price, originalPrice, stock, isDeal, categoryId, images, attributes, status } = body;
+        const { title, description, price, basePrice, currency, exchangeRateUsed, originalPrice, stock, isDeal, categoryId, images, attributes, status, metaTitle, metaDescription, keywords } = body;
 
         // Create product with relations
         const product = await prisma.product.create({
@@ -108,15 +109,18 @@ export async function POST(request: Request) {
                 title,
                 description,
                 price: Number(price),
+                basePrice: basePrice ? Number(basePrice) : null,
+                currency: currency || "TRY",
+                exchangeRateUsed: exchangeRateUsed ? Number(exchangeRateUsed) : null,
                 originalPrice: originalPrice ? Number(originalPrice) : null,
                 stock: stock !== undefined ? Number(stock) : 1,
                 isDeal: isDeal || false,
-                // @ts-ignore: Stale Prisma types
                 categoryId: Number(categoryId),
                 status: status || "On Sale",
-                // @ts-ignore: Stale Prisma types
                 attributes: attributes ? JSON.stringify(attributes) : null,
-                // @ts-ignore: Stale Prisma types
+                metaTitle,
+                metaDescription,
+                keywords,
                 images: {
                     create: images && images.length > 0 ? images.map((img: any, index: number) => ({
                         url: img.url,
@@ -125,7 +129,6 @@ export async function POST(request: Request) {
                     })) : []
                 }
             },
-            // @ts-ignore: Stale Prisma types
             include: {
                 category: true,
                 images: true
@@ -134,7 +137,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(product);
     } catch (error) {
-        console.error("Error creating product:", error);
+        console.error("[Products POST Error]:", error);
         return NextResponse.json(
             { error: "Error creating product" },
             { status: 500 }

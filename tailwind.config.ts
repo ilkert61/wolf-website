@@ -10,42 +10,56 @@ const config: Config = {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
-                cyber: {
+                brand: {
                     cyan: "#06b6d4",
+                    "cyan-dark": "#0891b2",
+                    accent: "#3b82f6",
+                    violet: "#6366f1",
                     emerald: "#10b981",
-                    violet: "#8b5cf6",
-                    rose: "#f43f5e",
+                    dark: "#0f172a",
+                    navy: "#020617"
                 },
                 surface: {
-                    dark: "#0f172a",
-                    medium: "#1e293b",
-                    light: "#334155",
-                },
+                    dark: "#0a0a0a",
+                    light: "#ffffff",
+                    muted: "#f8fafc",
+                    border: "rgba(255, 255, 255, 0.1)"
+                }
             },
             fontFamily: {
                 sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
             },
-            boxShadow: {
-                'glow-cyan': '0 0 30px rgba(6, 182, 212, 0.4)',
-                'glow-emerald': '0 0 30px rgba(16, 185, 129, 0.4)',
-                'glow-violet': '0 0 30px rgba(139, 92, 246, 0.4)',
-                'glow-sm-cyan': '0 0 15px rgba(6, 182, 212, 0.3)',
-                'glow-lg-cyan': '0 0 50px rgba(6, 182, 212, 0.5)',
+            animation: {
+                'gradient-x': 'gradient-x 15s ease infinite',
+                'float': 'float 6s ease-in-out infinite',
+                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'glow': 'glow 3s ease-in-out infinite alternate',
+            },
+            keyframes: {
+                'gradient-x': {
+                    '0%, 100%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'left center'
+                    },
+                    '50%': {
+                        'background-size': '200% 200%',
+                        'background-position': 'right center'
+                    },
+                },
+                'float': {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
+                'glow': {
+                    '0%': { opacity: '0.8', transform: 'scale(1)' },
+                    '100%': { opacity: '1', transform: 'scale(1.05)' }
+                }
             },
             backgroundImage: {
-                'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                'gradient-cyber': 'linear-gradient(135deg, #06b6d4, #10b981)',
-                'gradient-accent': 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
-                'gradient-hero': 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #10b981 100%)',
-            },
-            animation: {
-                'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-                'float': 'float 3s ease-in-out infinite',
-                'shine': 'shine 3s ease-in-out infinite',
-            },
-            backdropBlur: {
-                xs: '2px',
-            },
+                'mesh-dark': 'radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%)',
+                'mesh-light': 'radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%)',
+                'mesh-emerald': 'radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%)',
+            }
         },
     },
     plugins: [],

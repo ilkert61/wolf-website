@@ -1,0 +1,3 @@
+﻿app/wolf-admin-1392a14/settings/page.tsx(14,43): error TS2339: Property 'Decimal' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+app/wolf-admin-1392a14/settings/page.tsx(25,35): error TS18047: 'settings' is possibly 'null'.
+components/admin/ProductForm.tsx(355,77): error TS2322: Type 'string' is not assignable to type 'number'.

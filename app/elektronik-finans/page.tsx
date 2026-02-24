@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, Send, CheckCircle2, Smartphone, Laptop, Tablet, Watch, Banknote, Shield, Clock, AlertCircle, RefreshCw, Lock, ArrowRight, Upload } from "lucide-react";
+import { Calculator, Send, CheckCircle2, Smartphone, Banknote, Shield, RefreshCw, Lock, ArrowRight, Upload } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { submitFinanceRequest } from "@/app/actions/finance";
+import Link from "next/link";
 
 export default function ElectronicFinancePage() {
     const [activeTab, setActiveTab] = useState<"info" | "form">("info");
@@ -24,17 +25,13 @@ export default function ElectronicFinancePage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setStatus("loading");
-
         const data = new FormData(e.currentTarget);
-
         const result = await submitFinanceRequest(data);
 
         if (result.success) {
             setStatus("success");
             setStatusMessage(result.message);
             setFormData({ fullName: "", phone: "", email: "", deviceType: "Telefon", brandModel: "", deviceCondition: "İkinci El", requestedAmount: "", message: "" });
-            // Optional: convert form reset to use ref or reload if needed, but state reset covers controlled inputs.
-            // File input is uncontrolled, so we should reset the form element itself:
             e.currentTarget.reset();
         } else {
             setStatus("error");
@@ -42,39 +39,64 @@ export default function ElectronicFinancePage() {
         }
     };
 
+    const getPlaceholder = (type: string) => {
+        switch (type) {
+            case "Telefon": return "Örn: iPhone 14 Pro Max, Galaxy S23 Ultra";
+            case "Laptop": return "Örn: MacBook Pro M2, Asus ROG Strix";
+            case "Tablet": return "Örn: iPad Pro 11, Tab S9";
+            case "Konsol": return "Örn: PlayStation 5, Xbox Series X";
+            default: return "Örn: Marka ve Model detayları";
+        }
+    };
+
+    const getExtraDescription = (type: string) => {
+        switch (type) {
+            case "Telefon": return "Lütfen cihazın hafıza (GB) ve pil sağlığı (%) durumunu mesaj kısmında belirtin.";
+            case "Laptop": return "Lütfen işlemci, RAM ve ekran kartı modelini mesaj kısmında detaylandırın.";
+            case "Tablet": return "Lütfen cihazın neslini, kapasitesini ve varsa kalem/klavye gibi aksesuarlarını belirtin.";
+            case "Konsol": return "Lütfen kolların (kontrolcü) sayısını ve varsa beraberinde verilecek oyunları belirtin.";
+            default: return "Cihazınız hakkında değerini etkileyecek ekstra bilgileri mesaj kısmına ekleyebilirsiniz.";
+        }
+    };
+
     return (
-        <div className="min-h-screen text-white pb-20 bg-[#050505] relative">
+        <div className="min-h-screen pb-20 bg-slate-50 dark:bg-[#020202] relative">
             {/* Standalone Brand Header */}
             <div className="absolute top-0 left-0 w-full z-50 p-6 flex justify-center">
-                <div className="flex items-center gap-3 glass px-6 py-2 rounded-full border border-cyber-violet/20">
+                <Link href="/" className="flex items-center gap-3 bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-3xl px-6 py-2 rounded-full shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-slate-200 dark:border-white/10 transition-transform hover:scale-105">
                     <div className="relative w-8 h-8">
                         <Image src="/logo.png" alt="Wolf Logo" fill className="object-contain" />
                     </div>
-                    <span className="font-bold text-lg tracking-wider">WOLF BİLİŞİM</span>
-                </div>
+                    <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-widest">WOLF BİLİŞİM</span>
+                </Link>
             </div>
 
-            {/* Custom Header for Finance Microsite */}
-            <div className="relative h-[400px] w-full overflow-hidden flex items-center justify-center mb-12">
-                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-[#050505]/80 to-[#050505] z-10" />
+            {/* Premium Corporate Header */}
+            <div className="relative h-[450px] w-full overflow-hidden flex items-center justify-center mb-16 bg-[#020202]">
+                <div className="absolute inset-0 bg-mesh-dark opacity-60 mix-blend-screen pointer-events-none z-10" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#020202] dark:to-[#020202] z-20" />
                 <Image
                     src="/finance-concept-premium.png"
                     alt="Elektronik Finans"
                     fill
-                    className="object-cover opacity-60"
+                    className="object-cover opacity-30 mix-blend-luminosity"
                     priority
                 />
-                <div className="relative z-20 text-center max-w-4xl px-4">
+                <div className="relative z-30 text-center max-w-4xl px-4 mt-16">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight">
-                            <span className="text-white">WOLF</span> <span className="text-cyber-violet">FİNANS</span>
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan mb-6 shadow-sm">
+                            <Shield className="w-4 h-4" />
+                            <span className="text-xs font-bold tracking-widest uppercase">Güvenilir Finansman</span>
+                        </div>
+                        <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight text-white">
+                            Kurumsal <span className="gradient-text">Finans</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-gray-300 font-light max-w-2xl mx-auto">
-                            Elektronik cihazlarınız artık sizin için birer <span className="text-cyber-green font-semibold">nakit kaynağı</span>.
+                        <p className="text-lg md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
+                            Elektronik cihazlarınızı satmadan, değerinde <span className="text-white font-bold">nakit desteği</span> alın.
                         </p>
                     </motion.div>
                 </div>
@@ -83,12 +105,12 @@ export default function ElectronicFinancePage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Tab Navigation */}
                 <div className="flex justify-center mb-16">
-                    <div className="glass p-1.5 rounded-2xl inline-flex gap-2">
+                    <div className="premium-card p-1.5 rounded-2xl md:rounded-full inline-flex flex-col md:flex-row gap-2">
                         <button
                             onClick={() => setActiveTab("info")}
-                            className={`px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "info"
-                                ? "bg-cyber-violet text-white shadow-glow-violet"
-                                : "text-gray-400 hover:text-white"
+                            className={`px-8 py-3.5 rounded-xl md:rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === "info"
+                                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md"
+                                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
                                 }`}
                         >
                             <Shield className="w-5 h-5" />
@@ -96,9 +118,9 @@ export default function ElectronicFinancePage() {
                         </button>
                         <button
                             onClick={() => setActiveTab("form")}
-                            className={`px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === "form"
-                                ? "bg-cyber-green text-black shadow-glow-green"
-                                : "text-gray-400 hover:text-white"
+                            className={`px-8 py-3.5 rounded-xl md:rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === "form"
+                                ? "bg-brand-cyan text-white shadow-md shadow-brand-cyan/20"
+                                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
                                 }`}
                         >
                             <Calculator className="w-5 h-5" />
@@ -117,92 +139,92 @@ export default function ElectronicFinancePage() {
                             className="space-y-20"
                         >
                             {/* Infographic Description Section */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                                <div className="space-y-8">
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-violet/30">
-                                        <Lock className="w-4 h-4 text-cyber-violet" />
-                                        <span className="text-sm font-medium text-cyber-violet">WOLF FİNANS SİSTEMİ</span>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                                <div className="space-y-10">
+                                    <div>
+                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 mb-6">
+                                            <Lock className="w-4 h-4 text-brand-cyan" />
+                                            <span className="text-xs font-extrabold tracking-widest text-slate-700 dark:text-slate-300">WOLF FİNANS SİSTEMİ</span>
+                                        </div>
+                                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                                            Satmak Zorunda Değilsiniz.<br />
+                                            <span className="gradient-text">
+                                                Finansman Sağlayın, Geri Alın.
+                                            </span>
+                                        </h2>
                                     </div>
-                                    <h2 className="text-4xl font-bold">
-                                        Satmak Zorunda Değilsiniz.<br />
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-violet to-cyber-cyan">
-                                            Finansman Sağlayın, Geri Alın.
-                                        </span>
-                                    </h2>
-                                    <div className="space-y-6">
-                                        <div className="flex gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-cyber-violet/10 flex items-center justify-center shrink-0">
-                                                <Smartphone className="w-6 h-6 text-cyber-violet" />
+                                    <div className="space-y-8">
+                                        <div className="flex gap-5">
+                                            <div className="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 border border-brand-cyan/20">
+                                                <Smartphone className="w-7 h-7 text-brand-cyan" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-white mb-2">1. Cihazınızı Getirin</h3>
-                                                <p className="text-gray-400">Telefon, laptop veya tabletiniz uzman ekibimiz tarafından değerinde ekspertiz edilir.</p>
+                                                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2">1. Cihazınızı Getirin</h3>
+                                                <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Telefon, laptop veya tabletiniz uzman ekibimiz tarafından kurumsal standartlarda, değerinde ekspertiz edilir.</p>
                                             </div>
                                         </div>
-                                        <div className="flex gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-cyber-green/10 flex items-center justify-center shrink-0">
-                                                <Banknote className="w-6 h-6 text-cyber-green" />
+                                        <div className="flex gap-5">
+                                            <div className="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 border border-brand-cyan/20">
+                                                <Banknote className="w-7 h-7 text-brand-cyan" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-white mb-2">2. Nakit Ödeme Alın</h3>
-                                                <p className="text-gray-400">Belirlenen finansman tutarı anında nakit veya havale olarak size ödenir. Cihazınız <span className="text-white font-semibold">Wolf Bilişim Kasası</span>'nda güvenle saklanır.</p>
+                                                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2">2. Nakit Ödeme Alın</h3>
+                                                <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Belirlenen finansman tutarı anında nakit veya havale olarak ödenir. Cihazınız <span className="text-slate-900 dark:text-white font-bold">Wolf Bilişim Kasası</span>'nda güvenle saklanır.</p>
                                             </div>
                                         </div>
-                                        <div className="flex gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-cyber-cyan/10 flex items-center justify-center shrink-0">
-                                                <RefreshCw className="w-6 h-6 text-cyber-cyan" />
+                                        <div className="flex gap-5">
+                                            <div className="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 border border-brand-cyan/20">
+                                                <RefreshCw className="w-7 h-7 text-brand-cyan" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-white mb-2">3. Geri Teslim Alın</h3>
-                                                <p className="text-gray-400">Anlaşılan süre sonunda ödemeyi yaparak cihazınızı aynı kondisyonda geri teslim alırsınız.</p>
+                                                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2">3. Geri Teslim Alın</h3>
+                                                <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Anlaşılan süre sonunda ödemeyi yaparak cihazınızı bıraktığınız aynı kondisyonda geri teslim alırsınız.</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Pricing Example */}
-                                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                            <Calculator className="w-5 h-5 text-cyber-green" />
+                                    <div className="premium-card p-10 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-mesh-light dark:bg-mesh-dark opacity-10 pointer-events-none mix-blend-overlay" />
+                                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mb-8 flex items-center gap-3 relative z-10">
+                                            <Calculator className="w-6 h-6 text-brand-cyan" />
                                             Örnek Geri Alım Hesaplaması
                                         </h3>
-                                        <div className="flex flex-col sm:flex-row gap-6 items-center">
-                                            <div className="flex-1 text-center sm:text-left">
-                                                <p className="text-gray-400 text-sm mb-1">Cihaz Değeri (Nakit Ödeme)</p>
-                                                <p className="text-2xl font-bold text-white">10.000 ₺</p>
+                                        <div className="flex flex-col sm:flex-row gap-6 items-center relative z-10">
+                                            <div className="flex-1 text-center sm:text-left bg-slate-50 dark:bg-[#0a0a0a] border border-slate-200 dark:border-white/5 p-6 rounded-2xl w-full shadow-sm">
+                                                <p className="text-slate-500 text-xs mb-2 font-bold uppercase tracking-widest">Cihaz Değeri</p>
+                                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">10.000 ₺</p>
                                             </div>
-                                            <div className="hidden sm:block text-gray-500">
-                                                <ArrowRight className="w-6 h-6" />
+                                            <div className="hidden sm:block text-slate-200 dark:text-slate-800">
+                                                <ArrowRight className="w-8 h-8" />
                                             </div>
-                                            <div className="flex-1 text-center sm:text-left">
-                                                <p className="text-gray-400 text-sm mb-1">Geri Alış Bedeli (%15-20 Farkla)</p>
-                                                <p className="text-2xl font-bold text-cyber-green">11.500 ₺ - 12.000 ₺</p>
+                                            <div className="flex-1 text-center sm:text-left bg-brand-cyan/5 border border-brand-cyan/20 p-6 rounded-2xl w-full shadow-sm">
+                                                <p className="text-brand-cyan text-xs mb-2 font-bold uppercase tracking-widest">Geri Alış Bedeli</p>
+                                                <p className="text-2xl md:text-3xl font-black text-brand-cyan tracking-tight">11.500 ₺</p>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-4 leading-relaxed">
-                                            * Fiyatlar cihazın kondisyonuna, piyasa koşullarına ve vade süresine göre değişiklik gösterebilir.
+                                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-6 leading-relaxed font-semibold uppercase relative z-10">
+                                            * Fiyatlar cihazın kondisyonuna, piyasa koşullarına ve vade süresine göre (ort. %15-20 farkla) değişiklik gösterebilir.
                                         </p>
                                     </div>
                                 </div>
-                                <div className="relative h-[600px] w-full rounded-3xl overflow-hidden glass border border-white/10 group">
+                                <div className="relative h-[650px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-white/10 group">
                                     <Image
                                         src="/finance-concept-premium.png"
                                         alt="Elektronik Finans Sistemi"
                                         fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-1000"
                                     />
-                                    {/* Overlay Text Details (HTML on top of Image) */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/20 to-transparent" />
 
                                     <div className="absolute bottom-8 left-8 right-8">
-                                        <div className="glass p-6 rounded-2xl border-l-4 border-cyber-green">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="relative w-8 h-8">
-                                                    <Image src="/logo.png" alt="Wolf Logo" fill className="object-contain" />
-                                                </div>
-                                                <span className="font-black text-lg tracking-wider">WOLF BİLİŞİM</span>
+                                        <div className="bg-white/10 backdrop-blur-2xl p-8 rounded-[2rem] border border-white/20 shadow-2xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <Shield className="w-7 h-7 text-brand-cyan" />
+                                                <span className="font-extrabold text-xl text-white tracking-widest">%100 GÜVENLİK</span>
                                             </div>
-                                            <p className="text-gray-300 text-sm leading-relaxed">
-                                                Cihazlarınız özel güvenlikli kasalarımızda, 7/24 kamera sistemi ile izlenen ortamda, sigortalı olarak saklanmaktadır. Veri gizliliğiniz %100 güvence altındadır.
+                                            <p className="text-slate-200 text-sm leading-relaxed font-medium">
+                                                Cihazlarınız özel güvenlikli kasalarımızda, 7/24 kamera sistemi ile izlenen ortamda, sigortalı olarak saklanmaktadır. Veri gizliliğiniz tamamen güvence altındadır.
                                             </p>
                                         </div>
                                     </div>
@@ -216,93 +238,144 @@ export default function ElectronicFinancePage() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                         >
-                            <div className="max-w-3xl mx-auto glass-card p-8 md:p-12 rounded-[2rem] border border-cyber-green/20 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-green/10 rounded-full blur-[100px] pointer-events-none" />
+                            <div className="max-w-4xl mx-auto premium-card p-8 md:p-14 relative overflow-hidden">
+                                <div className="absolute inset-0 bg-mesh-light dark:bg-mesh-dark opacity-10 mix-blend-overlay pointer-events-none" />
+                                <h2 className="text-3xl md:text-4xl font-black mb-3 text-center text-slate-900 dark:text-white tracking-tight relative z-10">Hızlı Fiyat Teklifi</h2>
+                                <p className="text-slate-500 dark:text-slate-400 text-center mb-12 text-lg font-medium relative z-10">Formu doldurun, cihazınız için en iyi teklifi sunalım.</p>
 
-                                <h2 className="text-3xl font-bold mb-2 text-center">Hızlı Fiyat Teklifi</h2>
-                                <p className="text-gray-400 text-center mb-10">Formu doldurun, cihazınız için en iyi teklifi sunalım.</p>
-
-                                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
                                     {/* Personal Info */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Ad Soyad</label>
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Ad Soyad</label>
                                             <input
                                                 name="fullName"
                                                 required
                                                 type="text"
                                                 value={formData.fullName}
                                                 onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all font-medium"
+                                                placeholder="Adınız Soyadınız"
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Telefon</label>
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Telefon</label>
                                             <input
                                                 name="phone"
                                                 required
                                                 type="tel"
                                                 value={formData.phone}
                                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all font-medium"
+                                                placeholder="05XX XXX XX XX"
                                             />
                                         </div>
                                     </div>
 
                                     {/* Device Info */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Cihaz Türü</label>
-                                            <select
-                                                name="deviceType"
-                                                value={formData.deviceType}
-                                                onChange={e => setFormData({ ...formData, deviceType: e.target.value })}
-                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40 text-gray-300"
-                                            >
-                                                <option value="Telefon">Telefon</option>
-                                                <option value="Laptop">Laptop</option>
-                                                <option value="Tablet">Tablet</option>
-                                                <option value="Konsol">Oyun Konsolu</option>
-                                                <option value="Diğer">Diğer</option>
-                                            </select>
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Cihaz Türü</label>
+                                            <div className="relative">
+                                                <select
+                                                    name="deviceType"
+                                                    value={formData.deviceType}
+                                                    onChange={e => setFormData({ ...formData, deviceType: e.target.value })}
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all appearance-none cursor-pointer font-bold"
+                                                >
+                                                    <option value="Telefon">Telefon</option>
+                                                    <option value="Laptop">Laptop</option>
+                                                    <option value="Tablet">Tablet</option>
+                                                    <option value="Konsol">Oyun Konsolu</option>
+                                                    <option value="Diğer">Diğer</option>
+                                                </select>
+                                                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-400">Marka / Model</label>
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Marka / Model</label>
                                             <input
                                                 name="brandModel"
                                                 required
                                                 type="text"
                                                 value={formData.brandModel}
                                                 onChange={e => setFormData({ ...formData, brandModel: e.target.value })}
-                                                className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
-                                                placeholder="Örn: iPhone 14 Pro Max"
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all font-medium"
+                                                placeholder={getPlaceholder(formData.deviceType)}
                                             />
                                         </div>
                                     </div>
 
+                                    {/* Extracted Descriptions */}
+                                    <div className="bg-brand-cyan/5 p-5 rounded-2xl border border-brand-cyan/20 flex gap-4">
+                                        <Shield className="w-6 h-6 text-brand-cyan shrink-0 top-0" />
+                                        <div>
+                                            <h4 className="text-sm font-extrabold text-brand-cyan mb-1">Önemli Bilgi</h4>
+                                            <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                                                {getExtraDescription(formData.deviceType)}
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     {/* Additional Info */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400">Talep Ettiğiniz Tutar (TL)</label>
-                                        <input
-                                            name="requestedAmount"
-                                            type="number"
-                                            value={formData.requestedAmount}
-                                            onChange={e => setFormData({ ...formData, requestedAmount: e.target.value })}
-                                            className="w-full glass rounded-xl px-4 py-3.5 focus:outline-none focus:border-cyber-green transition-colors bg-black/40"
-                                            placeholder="Örn: 25000"
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Kondisyon</label>
+                                            <div className="relative">
+                                                <select
+                                                    name="deviceCondition"
+                                                    value={formData.deviceCondition}
+                                                    onChange={e => setFormData({ ...formData, deviceCondition: e.target.value })}
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all appearance-none cursor-pointer font-bold"
+                                                >
+                                                    <option value="Sıfır Kapalı Kutu">Sıfır (Kapalı Kutu)</option>
+                                                    <option value="İkinci El">İkinci El (Kullanılmış)</option>
+                                                    <option value="Kusurlu">Kusurlu / Kırık</option>
+                                                </select>
+                                                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2.5">
+                                            <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Talep Ettiğiniz Tutar (TL)</label>
+                                            <input
+                                                name="requestedAmount"
+                                                type="number"
+                                                value={formData.requestedAmount}
+                                                onChange={e => setFormData({ ...formData, requestedAmount: e.target.value })}
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all font-medium"
+                                                placeholder="Örn: 25000"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2.5">
+                                        <label className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Mesaj / Ek Açıklama</label>
+                                        <textarea
+                                            name="message"
+                                            rows={3}
+                                            value={formData.message}
+                                            onChange={e => setFormData({ ...formData, message: e.target.value })}
+                                            className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-all resize-none font-medium"
+                                            placeholder="Detaylı özellikler, depolama formatı veya diğer notlarınızı belirtebilirsiniz."
                                         />
                                     </div>
 
                                     {/* Photo Upload */}
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400 flex items-center justify-between">
-                                            <span>Fotoğraflar</span>
-                                            <span className="text-[10px] bg-cyber-green/20 text-cyber-green px-2 py-0.5 rounded">OPSİYONEL</span>
+                                    <div className="space-y-2.5">
+                                        <label className="flex items-center justify-between">
+                                            <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Fotoğraflar</span>
+                                            <span className="text-[10px] font-bold bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">Opsiyonel</span>
                                         </label>
-                                        <label className="relative flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-cyber-green/50 hover:bg-cyber-green/5 transition-all group/upload">
+                                        <label className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl cursor-pointer hover:border-brand-cyan dark:hover:border-brand-cyan hover:bg-brand-cyan/5 dark:hover:bg-brand-cyan/10 transition-all group/upload bg-slate-50 dark:bg-black/20">
                                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <Upload className="w-6 h-6 text-gray-400 mb-2 group-hover/upload:text-cyber-green transition-colors" />
-                                                <p className="text-xs text-gray-500 group-hover/upload:text-gray-300">Cihaz fotoğraflarını eklemek için tıklayın</p>
+                                                <div className="w-12 h-12 bg-white dark:bg-[#0a0a0a] rounded-full shadow-sm border border-slate-100 dark:border-white/5 flex items-center justify-center mb-3 group-hover/upload:scale-110 group-hover/upload:shadow-brand-cyan/20 transition-all">
+                                                    <Upload className="w-5 h-5 text-brand-cyan" />
+                                                </div>
+                                                <p className="text-sm font-bold text-slate-600 dark:text-slate-400">Cihaz fotoğraflarını eklemek için tıklayın</p>
                                             </div>
                                             <input name="photos" type="file" multiple accept="image/*" className="hidden" />
                                         </label>
@@ -311,14 +384,14 @@ export default function ElectronicFinancePage() {
                                     <button
                                         type="submit"
                                         disabled={status === "loading" || status === "success"}
-                                        className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 hover:scale-[1.02]
+                                        className={`w-full py-5 rounded-2xl font-black text-xl transition-all flex items-center justify-center gap-3
                                             ${status === "success"
-                                                ? "bg-green-600 text-white"
-                                                : "bg-cyber-violet text-white hover:bg-violet-600 shadow-lg shadow-cyber-violet/20"
+                                                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
+                                                : "bg-slate-900 dark:bg-brand-cyan text-white shadow-lg hover:shadow-xl hover:-translate-y-1 hover:bg-slate-800 dark:hover:bg-brand-cyan-dark"
                                             }`}
                                     >
                                         {status === "loading" ? (
-                                            <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                            <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
                                         ) : status === "success" ? (
                                             <>
                                                 <CheckCircle2 className="w-6 h-6" />
@@ -327,13 +400,13 @@ export default function ElectronicFinancePage() {
                                         ) : (
                                             <>
                                                 Teklifi Gönder
-                                                <Send className="w-5 h-5" />
+                                                <Send className="w-6 h-6" />
                                             </>
                                         )}
                                     </button>
 
                                     {statusMessage && (
-                                        <p className={`text-center text-sm mt-4 ${status === "success" ? "text-green-400" : "text-red-400"}`}>
+                                        <p className={`text-center font-bold text-sm mt-4 p-4 rounded-xl ${status === "success" ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20" : "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20"}`}>
                                             {statusMessage}
                                         </p>
                                     )}

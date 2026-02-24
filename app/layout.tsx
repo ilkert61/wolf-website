@@ -20,7 +20,7 @@ export default function RootLayout({
     return (
         <html lang="tr" className="dark" suppressHydrationWarning>
             <body
-                className={`antialiased bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden`}
+                className={`antialiased bg-background text-foreground min-h-[100dvh] flex flex-col overflow-x-hidden`}
                 suppressHydrationWarning
             >
                 <Navbar />

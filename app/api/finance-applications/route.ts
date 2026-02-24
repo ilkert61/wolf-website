@@ -47,6 +47,18 @@ export async function POST(request: Request) {
             );
         }
 
+        // Basic validations
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email && !emailRegex.test(email)) {
+            return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+        }
+
+        // Basic phone validation (digits, spaces, plus, dashes, parens, min 10 chars)
+        const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/;
+        if (!phoneRegex.test(phone)) {
+            return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 });
+        }
+
         // @ts-ignore
         const application = await prisma.financeApplication.create({
             data: {

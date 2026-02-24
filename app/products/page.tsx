@@ -40,7 +40,7 @@ const PriceRangeFilter = memo(function PriceRangeFilter({
         if (maxRef.current && initialMax) {
             maxRef.current.value = initialMax;
         }
-    }, []);
+    }, [initialMin, initialMax]);
 
     const handleApply = () => {
         const min = minRef.current?.value || "";
@@ -61,17 +61,17 @@ const PriceRangeFilter = memo(function PriceRangeFilter({
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6">
-            <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-white">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 flex items-center justify-center">
-                    <span className="text-cyber-emerald font-bold text-sm">₺</span>
+        <div className="premium-card p-6">
+            <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-900 dark:text-white">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <span className="text-emerald-500 dark:text-emerald-400 font-bold text-sm">₺</span>
                 </div>
                 Fiyat Aralığı
             </h2>
             <div className="space-y-3">
                 <div className="flex gap-3 items-center">
                     <div className="flex-1">
-                        <label className="text-xs text-gray-500 mb-1 block">Minimum</label>
+                        <label className="text-xs text-slate-500 dark:text-slate-400 mb-1 block font-bold uppercase tracking-wider">Minimum</label>
                         <input
                             ref={minRef}
                             type="text"
@@ -82,12 +82,12 @@ const PriceRangeFilter = memo(function PriceRangeFilter({
                             onChange={handleInputChange}
                             onBlur={handleApply}
                             onKeyDown={handleKeyDown}
-                            className="w-full glass bg-surface-dark/50 border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyber-cyan focus:shadow-glow-sm-cyan transition-all"
+                            className="premium-input py-2 text-sm"
                         />
                     </div>
-                    <span className="text-gray-600 mt-5">—</span>
+                    <span className="text-slate-400 mt-5 font-bold">—</span>
                     <div className="flex-1">
-                        <label className="text-xs text-gray-500 mb-1 block">Maksimum</label>
+                        <label className="text-xs text-slate-500 dark:text-slate-400 mb-1 block font-bold uppercase tracking-wider">Maksimum</label>
                         <input
                             ref={maxRef}
                             type="text"
@@ -98,7 +98,7 @@ const PriceRangeFilter = memo(function PriceRangeFilter({
                             onChange={handleInputChange}
                             onBlur={handleApply}
                             onKeyDown={handleKeyDown}
-                            className="w-full glass bg-surface-dark/50 border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyber-cyan focus:shadow-glow-sm-cyan transition-all"
+                            className="premium-input py-2 text-sm"
                         />
                     </div>
                 </div>
@@ -108,7 +108,6 @@ const PriceRangeFilter = memo(function PriceRangeFilter({
 });
 
 function ProductsContent() {
-    // ... (State remain same)
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -307,13 +306,13 @@ function ProductsContent() {
                     <button
                         onClick={() => handleCategoryChange(String(category.id))}
                         className={`flex-1 text-left flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-sm ${isSelected
-                            ? "bg-gradient-cyber text-surface-dark font-semibold shadow-glow-sm-cyan"
-                            : "hover:bg-white/5 text-gray-400 hover:text-white"
+                            ? "bg-brand-cyan text-white font-bold shadow-sm shadow-brand-cyan/20"
+                            : "hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white"
                             }`}
                         style={{ marginLeft: `${level * 16}px` }}
                     >
                         <span className="truncate">{category.name}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ml-2 ${isSelected ? "bg-surface-dark/30" : "bg-surface-medium text-gray-500"
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-bold ml-2 ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400"
                             }`}>
                             {category._count?.products || 0}
                         </span>
@@ -322,9 +321,9 @@ function ProductsContent() {
                     {hasChildren && (
                         <button
                             onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-                            className={`p-2 rounded-lg transition-colors ${isSelected ? "text-cyber-cyan bg-white/10" : "text-gray-500 hover:text-white hover:bg-white/5"}`}
+                            className={`p-2 rounded-lg transition-colors ${isSelected ? "text-brand-cyan bg-brand-cyan/10" : "text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"}`}
                         >
-                            {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                            {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                         </button>
                     )}
                 </div>
@@ -366,10 +365,10 @@ function ProductsContent() {
     }: any) => (
         <div className="space-y-6">
             {/* Categories */}
-            <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-white">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-cyber flex items-center justify-center">
-                        <Filter className="w-4 h-4 text-surface-dark" />
+            <div className="premium-card p-6">
+                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-900 dark:text-white">
+                    <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
+                        <Filter className="w-4 h-4 text-brand-cyan" />
                     </div>
                     Kategoriler
                 </h2>
@@ -378,8 +377,8 @@ function ProductsContent() {
                         <button
                             onClick={() => handleCategoryChange("")}
                             className={`w-full text-left flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${!categoryId
-                                ? "bg-gradient-cyber text-surface-dark font-semibold shadow-glow-sm-cyan"
-                                : "hover:bg-white/5 text-gray-400 hover:text-white"
+                                ? "bg-brand-cyan text-white font-bold shadow-sm shadow-brand-cyan/20"
+                                : "hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white"
                                 }`}
                         >
                             <span className="flex items-center gap-2">
@@ -405,17 +404,17 @@ function ProductsContent() {
             />
 
             {/* Deal of the Week Filter */}
-            <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-white">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/30 to-red-500/10 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-orange-400" />
+            <div className="premium-card p-6">
+                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-900 dark:text-white">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-orange-500" />
                     </div>
                     Kampanyalar
                 </h2>
                 <label className="flex items-center justify-between cursor-pointer group">
-                    <span className="flex items-center gap-2 text-gray-300 group-hover:text-white transition-colors">
+                    <span className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         Haftanın Fırsatları
-                        {isDeal && <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
+                        {isDeal && <span className="flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />}
                     </span>
                     <div className="relative">
                         <input
@@ -424,32 +423,32 @@ function ProductsContent() {
                             onChange={(e) => setIsDeal(e.target.checked)}
                             className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+                        <div className="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500 shadow-inner"></div>
                     </div>
                 </label>
             </div>
 
             {/* Dynamic Attributes Filter */}
             {categoryId && Object.keys(availableAttributes).length > 0 && (
-                <div className="glass-card rounded-2xl p-6 space-y-5">
-                    <h2 className="text-lg font-bold flex items-center gap-2 text-white">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500/30 to-violet-500/10 flex items-center justify-center">
-                            <SlidersHorizontal className="w-4 h-4 text-cyber-violet" />
+                <div className="premium-card p-6 space-y-5">
+                    <h2 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                        <div className="w-8 h-8 rounded-lg bg-brand-violet/10 flex items-center justify-center">
+                            <SlidersHorizontal className="w-4 h-4 text-brand-violet" />
                         </div>
                         Özellikler
                     </h2>
                     {Object.entries(availableAttributes).map(([attrName, values]: [string, any]) => (
                         <div key={attrName}>
-                            <h3 className="text-sm font-semibold text-cyber-cyan mb-3 uppercase tracking-wider">{attrName}</h3>
+                            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">{attrName}</h3>
                             <div className="space-y-2">
                                 {Array.from(values as Set<string>).map((val) => (
-                                    <label key={val} className="flex items-center gap-3 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors">
-                                        <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${selectedAttributes[attrName] === val
-                                            ? "bg-gradient-cyber border-transparent shadow-glow-sm-cyan"
-                                            : "border-gray-600 group-hover:border-gray-400"
+                                    <label key={val} className="flex items-center gap-3 cursor-pointer group p-2 mx-1 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${selectedAttributes[attrName] === val
+                                            ? "bg-brand-cyan border-brand-cyan shadow-sm shadow-brand-cyan/30"
+                                            : "border-slate-300 dark:border-slate-600 group-hover:border-slate-400 dark:group-hover:border-slate-400"
                                             }`}>
                                             {selectedAttributes[attrName] === val && (
-                                                <svg className="w-3 h-3 text-surface-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
@@ -460,7 +459,7 @@ function ProductsContent() {
                                             checked={selectedAttributes[attrName] === val}
                                             onChange={() => handleAttributeChange(attrName, val)}
                                         />
-                                        <span className={`text-sm transition-colors ${selectedAttributes[attrName] === val ? "text-white font-medium" : "text-gray-400"}`}>
+                                        <span className={`text-sm font-medium transition-colors ${selectedAttributes[attrName] === val ? "text-slate-900 dark:text-white font-bold" : "text-slate-600 dark:text-slate-400"}`}>
                                             {val}
                                         </span>
                                     </label>
@@ -472,10 +471,10 @@ function ProductsContent() {
             )}
 
             {/* Sort */}
-            <div className="glass-card rounded-2xl p-6">
-                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-white">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-accent flex items-center justify-center">
-                        <SlidersHorizontal className="w-4 h-4 text-white" />
+            <div className="premium-card p-6">
+                <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-900 dark:text-white">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <SlidersHorizontal className="w-4 h-4 text-blue-500" />
                     </div>
                     Sıralama
                 </h2>
@@ -489,8 +488,8 @@ function ProductsContent() {
                             key={option.label}
                             onClick={() => setSort(option.value)}
                             className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${sort === option.value
-                                ? "bg-gradient-accent text-white shadow-glow-sm-cyan font-medium"
-                                : "hover:bg-white/5 text-gray-400 hover:text-white"
+                                ? "bg-slate-900 text-white dark:bg-white dark:text-black font-bold shadow-md"
+                                : "hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium"
                                 }`}
                         >
                             <span>{option.icon}</span>
@@ -504,9 +503,9 @@ function ProductsContent() {
             {hasActiveFilters && (
                 <button
                     onClick={clearAllFilters}
-                    className="w-full py-3 px-4 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 px-4 rounded-xl border border-red-500/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 font-bold transition-all flex items-center justify-center gap-2"
                 >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                     Filtreleri Temizle
                 </button>
             )}
@@ -514,169 +513,170 @@ function ProductsContent() {
     );
 
     return (
-        <div className="container mx-auto px-4 py-8 pt-28 min-h-screen">
-            {/* Hero Header */}
-            <div className="relative mb-8 p-6 md:p-8 rounded-3xl glass-card overflow-hidden">
-                {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-cyan/10 rounded-full blur-[80px] pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyber-violet/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="bg-slate-50 dark:bg-[#020202] text-slate-900 dark:text-slate-200 min-h-screen relative overflow-hidden pb-12">
+            {/* Background Effects */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-mesh-light dark:bg-mesh-dark opacity-30 mix-blend-screen pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
-                    <div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-2">
-                            <span className="text-white">{selectedCategory ? selectedCategory.name : "Tüm "}</span>
-                            <span className="gradient-text">{selectedCategory ? "" : "Ürünler"}</span>
-                        </h1>
-                        <p className="text-gray-400 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyber-emerald pulse-glow" />
-                            {products.length} ürün listeleniyor
-                        </p>
-                    </div>
-
-                    {/* View Controls */}
-                    <div className="flex items-center gap-3">
-                        {/* Grid Size Toggle */}
-                        <div className="glass rounded-xl p-1 flex gap-1">
-                            <button
-                                onClick={() => setGridSize(2)}
-                                className={`p-2.5 rounded-lg transition-all ${gridSize === 2 ? 'bg-gradient-cyber text-surface-dark' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                <Grid3X3 className="w-5 h-5" />
-                            </button>
-                            <button
-                                onClick={() => setGridSize(3)}
-                                className={`p-2.5 rounded-lg transition-all ${gridSize === 3 ? 'bg-gradient-cyber text-surface-dark' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                <LayoutGrid className="w-5 h-5" />
-                            </button>
+            <div className="container mx-auto px-4 py-8 pt-28 relative z-10">
+                {/* Hero Header */}
+                <div className="relative mb-8 p-6 md:p-8 rounded-3xl premium-card overflow-hidden bg-white/50 dark:bg-black/20 backdrop-blur-xl">
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
+                        <div>
+                            <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight line-clamp-1">
+                                <span className="text-slate-900 dark:text-white">{selectedCategory ? selectedCategory.name : "Tüm "}</span>
+                                <span className="gradient-text">{selectedCategory ? "" : "Ürünler"}</span>
+                            </h1>
+                            <p className="text-slate-500 dark:text-slate-400 flex items-center gap-2 font-medium">
+                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                {products.length} ürün listeleniyor
+                            </p>
                         </div>
 
-                        {/* Mobile Filter Button */}
-                        <button
-                            onClick={() => setMobileFiltersOpen(true)}
-                            className="lg:hidden glass px-4 py-2.5 rounded-xl flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-                        >
-                            <Filter className="w-5 h-5" />
-                            Filtreler
-                            {hasActiveFilters && (
-                                <span className="w-2 h-2 rounded-full bg-cyber-cyan" />
-                            )}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Desktop Sidebar */}
-                <aside className="hidden lg:block w-80 flex-shrink-0">
-                    <div className="sticky top-28">
-                        <FilterSidebar
-                            categories={categories}
-                            categoryId={categoryId}
-                            handleCategoryChange={handleCategoryChange}
-                            minPrice={minPrice}
-                            maxPrice={maxPrice}
-                            setMinPrice={setMinPrice}
-                            setMaxPrice={setMaxPrice}
-                            availableAttributes={availableAttributes}
-                            selectedAttributes={selectedAttributes}
-                            handleAttributeChange={handleAttributeChange}
-                            sort={sort}
-                            setSort={setSort}
-                            hasActiveFilters={hasActiveFilters}
-                            clearAllFilters={clearAllFilters}
-                            isDeal={isDeal}
-                            setIsDeal={setIsDeal}
-                        />
-                    </div>
-                </aside>
-
-                {/* Mobile Filters Modal */}
-                {mobileFiltersOpen && (
-                    <div className="fixed inset-0 z-50 lg:hidden">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileFiltersOpen(false)} />
-                        <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-surface-dark border-l border-white/10 overflow-y-auto">
-                            <div className="sticky top-0 bg-surface-dark/95 backdrop-blur-xl z-10 p-4 border-b border-white/10 flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-white">Filtreler</h2>
+                        {/* View Controls */}
+                        <div className="flex items-center gap-3">
+                            {/* Grid Size Toggle */}
+                            <div className="bg-slate-100 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-xl p-1 flex gap-1">
                                 <button
-                                    onClick={() => setMobileFiltersOpen(false)}
-                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                    onClick={() => setGridSize(2)}
+                                    className={`p-2 rounded-lg transition-all ${gridSize === 2 ? 'bg-white dark:bg-[#0a0a0a] shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
                                 >
-                                    <X className="w-6 h-6" />
+                                    <Grid3X3 className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => setGridSize(3)}
+                                    className={`p-2 rounded-lg transition-all ${gridSize === 3 ? 'bg-white dark:bg-[#0a0a0a] shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
+                                >
+                                    <LayoutGrid className="w-5 h-5" />
                                 </button>
                             </div>
-                            <div className="p-4">
-                                <FilterSidebar
-                                    categories={categories}
-                                    categoryId={categoryId}
-                                    handleCategoryChange={handleCategoryChange}
-                                    minPrice={minPrice}
-                                    maxPrice={maxPrice}
-                                    setMinPrice={setMinPrice}
-                                    setMaxPrice={setMaxPrice}
-                                    availableAttributes={availableAttributes}
-                                    selectedAttributes={selectedAttributes}
-                                    handleAttributeChange={handleAttributeChange}
-                                    sort={sort}
-                                    setSort={setSort}
-                                    hasActiveFilters={hasActiveFilters}
-                                    clearAllFilters={clearAllFilters}
-                                    isDeal={isDeal}
-                                    setIsDeal={setIsDeal}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
 
-                {/* Product Grid */}
-                <div className="flex-grow">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-24 glass-card rounded-3xl">
-                            <div className="relative">
-                                <Loader2 className="w-16 h-16 animate-spin text-cyber-cyan" />
-                                <div className="absolute inset-0 bg-cyber-cyan/20 blur-xl" />
-                            </div>
-                            <p className="text-gray-400 mt-6">Ürünler yükleniyor...</p>
-                        </div>
-                    ) : products.length > 0 ? (
-                        <div className={`grid gap-6 ${gridSize === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-                            {products.map((product, index) => (
-                                <div
-                                    key={product.id}
-                                    style={{ animationDelay: `${index * 50}ms` }}
-                                    className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-                                >
-                                    <ProductCard
-                                        product={{
-                                            ...product,
-                                            price: Number(product.price),
-                                            images: product.images,
-                                            category: product.category
-                                        }}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-24 glass-card rounded-3xl">
-                            <div className="relative inline-block mb-6">
-                                <div className="w-24 h-24 bg-gradient-to-br from-cyber-cyan/20 to-cyber-violet/20 rounded-full flex items-center justify-center">
-                                    <Package className="w-12 h-12 text-gray-500" />
-                                </div>
-                                <div className="absolute inset-0 bg-cyber-cyan/10 blur-2xl" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-white mb-3">Ürün Bulunamadı</h3>
-                            <p className="text-gray-400 mb-6">Bu kriterlere uygun ürün bulunmamaktadır.</p>
+                            {/* Mobile Filter Button */}
                             <button
-                                onClick={clearAllFilters}
-                                className="cyber-button inline-flex items-center gap-2"
+                                onClick={() => setMobileFiltersOpen(true)}
+                                className="lg:hidden bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 px-4 py-2 rounded-xl flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/10 transition-colors shadow-sm"
                             >
-                                <X className="w-4 h-4" />
-                                <span>Filtreleri Temizle</span>
+                                <Filter className="w-5 h-5" />
+                                Filtreler
+                                {hasActiveFilters && (
+                                    <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan shadow-[0_0_10px_rgba(6,182,212,0.5)]" />
+                                )}
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col lg:flex-row gap-8">
+                    {/* Desktop Sidebar */}
+                    <aside className="hidden lg:block w-72 lg:w-80 flex-shrink-0">
+                        <div className="sticky top-28">
+                            <FilterSidebar
+                                categories={categories}
+                                categoryId={categoryId}
+                                handleCategoryChange={handleCategoryChange}
+                                minPrice={minPrice}
+                                maxPrice={maxPrice}
+                                setMinPrice={setMinPrice}
+                                setMaxPrice={setMaxPrice}
+                                availableAttributes={availableAttributes}
+                                selectedAttributes={selectedAttributes}
+                                handleAttributeChange={handleAttributeChange}
+                                sort={sort}
+                                setSort={setSort}
+                                hasActiveFilters={hasActiveFilters}
+                                clearAllFilters={clearAllFilters}
+                                isDeal={isDeal}
+                                setIsDeal={setIsDeal}
+                            />
+                        </div>
+                    </aside>
+
+                    {/* Mobile Filters Modal */}
+                    {mobileFiltersOpen && (
+                        <div className="fixed inset-0 z-[100] lg:hidden">
+                            <div className="absolute inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md" onClick={() => setMobileFiltersOpen(false)} />
+                            <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-slate-50 dark:bg-[#0a0a0a] border-l border-slate-200 dark:border-white/10 overflow-y-auto shadow-2xl">
+                                <div className="sticky top-0 bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-xl z-20 p-5 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Filtreler</h2>
+                                    <button
+                                        onClick={() => setMobileFiltersOpen(false)}
+                                        className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                                    >
+                                        <X className="w-6 h-6 text-slate-500" />
+                                    </button>
+                                </div>
+                                <div className="p-4">
+                                    <FilterSidebar
+                                        categories={categories}
+                                        categoryId={categoryId}
+                                        handleCategoryChange={handleCategoryChange}
+                                        minPrice={minPrice}
+                                        maxPrice={maxPrice}
+                                        setMinPrice={setMinPrice}
+                                        setMaxPrice={setMaxPrice}
+                                        availableAttributes={availableAttributes}
+                                        selectedAttributes={selectedAttributes}
+                                        handleAttributeChange={handleAttributeChange}
+                                        sort={sort}
+                                        setSort={setSort}
+                                        hasActiveFilters={hasActiveFilters}
+                                        clearAllFilters={clearAllFilters}
+                                        isDeal={isDeal}
+                                        setIsDeal={setIsDeal}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     )}
+
+                    {/* Product Grid */}
+                    <div className="flex-grow">
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-24 premium-card rounded-3xl bg-white/50 dark:bg-black/20">
+                                <div className="relative">
+                                    <Loader2 className="w-16 h-16 animate-spin text-brand-cyan" />
+                                    <div className="absolute inset-0 bg-brand-cyan/20 blur-xl" />
+                                </div>
+                                <p className="text-slate-500 dark:text-slate-400 font-medium mt-6">Ürünler yükleniyor...</p>
+                            </div>
+                        ) : products.length > 0 ? (
+                            <div className={`grid gap-6 ${gridSize === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'}`}>
+                                {products.map((product, index) => (
+                                    <div
+                                        key={product.id}
+                                        style={{ animationDelay: `${index * 50}ms` }}
+                                        className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+                                    >
+                                        <ProductCard
+                                            product={{
+                                                ...product,
+                                                price: Number(product.price),
+                                                images: product.images,
+                                                category: product.category
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-24 premium-card rounded-3xl bg-white/50 dark:bg-black/20">
+                                <div className="relative inline-block mb-8">
+                                    <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full flex items-center justify-center shadow-sm">
+                                        <Package className="w-10 h-10 text-slate-400" />
+                                    </div>
+                                    <div className="absolute inset-0 bg-brand-cyan/5 blur-2xl" />
+                                </div>
+                                <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Ürün Bulunamadı</h3>
+                                <p className="text-slate-500 dark:text-slate-400 font-medium mb-8">Bu kriterlere uygun ürün bulunmamaktadır.</p>
+                                <button
+                                    onClick={clearAllFilters}
+                                    className="premium-button text-sm inline-flex items-center gap-2 px-8"
+                                >
+                                    <X className="w-4 h-4" />
+                                    <span>Filtreleri Temizle</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -686,12 +686,12 @@ function ProductsContent() {
 export default function ProductsPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex flex-col items-center justify-center pt-28">
+            <div className="min-h-screen flex flex-col items-center justify-center pt-28 bg-slate-50 dark:bg-[#020202]">
                 <div className="relative">
-                    <Loader2 className="w-16 h-16 animate-spin text-cyber-cyan" />
-                    <div className="absolute inset-0 bg-cyber-cyan/20 blur-xl" />
+                    <Loader2 className="w-16 h-16 animate-spin text-brand-cyan" />
+                    <div className="absolute inset-0 bg-brand-cyan/20 blur-xl" />
                 </div>
-                <p className="text-gray-400 mt-6">Yükleniyor...</p>
+                <p className="text-slate-500 dark:text-slate-400 font-bold mt-6">Yükleniyor...</p>
             </div>
         }>
             <ProductsContent />

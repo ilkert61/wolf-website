@@ -73,7 +73,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     };
 
     return (
-        <div className="grid grid-cols-1 grid-rows-1 w-full flex-grow overflow-hidden">
+        <div className="grid grid-cols-1 grid-rows-1 w-full flex-grow overflow-clip">
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
                     key={pathname}
@@ -86,7 +86,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
                         x: { type: "tween", ease: [0.25, 0.1, 0.25, 1], duration: 0.35 },
                         opacity: { duration: 0.25 },
                     }}
-                    className="w-full h-full col-start-1 row-start-1 will-change-transform"
+                    className="w-full h-full col-start-1 row-start-1"
                 >
                     <FrozenRouter>
                         {children}

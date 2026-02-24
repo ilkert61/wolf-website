@@ -30,34 +30,33 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     if (isSold) {
         return (
-            <div className="group glass-card rounded-2xl overflow-hidden flex flex-col opacity-60">
-                <div className="relative aspect-square overflow-hidden bg-surface-dark">
+            <div className="premium-card opacity-60 flex flex-col mix-blend-luminosity grayscale transition-all hover:grayscale-0 group">
+                <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-white/5">
                     {mainImage ? (
                         <img
                             src={mainImage}
                             alt={product.title}
-                            className="w-full h-full object-cover grayscale"
+                            className="w-full h-full object-cover"
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500">
+                        <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-600">
                             Görsel Yok
                         </div>
                     )}
                     <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-red-500/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)] uppercase tracking-wider backdrop-blur-sm">
+                        <span className="bg-red-600/90 backdrop-blur-md text-white border border-red-500/50 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
                             Tükendi
                         </span>
                     </div>
-                    <div className="absolute inset-0 bg-surface-dark/50" />
                 </div>
 
-                <div className="p-5 flex-grow flex flex-col">
-                    <div className="text-xs text-gray-500 mb-2 font-medium">{product.category.name}</div>
-                    <h3 className="text-lg font-semibold mb-3 line-clamp-2 text-gray-500">
+                <div className="p-5 flex-grow flex flex-col bg-white dark:bg-[#0a0a0a]">
+                    <div className="text-xs text-slate-500 mb-2 font-medium">{product.category.name}</div>
+                    <h3 className="text-lg font-semibold mb-3 line-clamp-2 text-slate-500 dark:text-slate-400">
                         {product.title}
                     </h3>
-                    <div className="mt-auto flex items-center justify-between">
-                        <span className="text-xl font-bold text-gray-500 line-through decoration-red-500/50">
+                    <div className="mt-auto pt-4 border-t border-slate-100 dark:border-white/5">
+                        <span className="text-xl font-bold text-slate-500 dark:text-slate-600 line-through decoration-slate-400">
                             ₺{price.toLocaleString()}
                         </span>
                     </div>
@@ -69,37 +68,34 @@ export default function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/products/${product.id}`}
-            className="group glass-card rounded-2xl overflow-hidden flex flex-col transition-all duration-500 hover:shadow-glow-cyan hover:border-cyber-cyan/40 relative"
+            className="premium-card group flex flex-col cursor-pointer"
         >
-            <div className="relative aspect-square overflow-hidden bg-surface-dark">
+            <div className="relative aspect-square overflow-hidden bg-slate-50 dark:bg-black/50">
                 {mainImage ? (
                     <img
                         src={mainImage}
                         alt={product.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-600">
                         Görsel Yok
                     </div>
                 )}
-
-                {/* Gradient Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Badges Container */}
                 <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
                     {/* Deal Badge */}
                     {product.isDeal && (
-                        <span className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-violet-500/30 uppercase tracking-widest flex items-center gap-1">
-                            <Flame className="w-3 h-3 fill-current" />
+                        <span className="bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 uppercase tracking-widest shadow-lg shadow-orange-500/30">
+                            <Flame className="w-3.5 h-3.5" />
                             Fırsat
                         </span>
                     )}
 
                     {/* Discount Badge */}
                     {hasDiscount && (
-                        <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-red-500/30">
+                        <span className="bg-brand-violet text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-brand-violet/30">
                             %{discountRate} İndirim
                         </span>
                     )}
@@ -108,45 +104,41 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Stock Warning Badge */}
                 {showStockWarning && (
                     <div className="absolute bottom-4 left-4 z-10">
-                        <span className="bg-orange-500/90 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-sm animate-pulse">
-                            Son {product.stock} Ürün!
+                        <span className="bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-amber-500/30">
+                            Son {product.stock} Adet
                         </span>
                     </div>
                 )}
 
-                {/* Quick View Button */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="px-5 py-2.5 glass rounded-full text-white text-sm font-medium flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <Eye className="w-4 h-4" />
+                {/* Quick View Button Overlay */}
+                <div className="absolute inset-0 bg-slate-900/10 dark:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <Eye className="w-4 h-4 text-brand-cyan" />
                         İncele
                     </div>
                 </div>
-
-                {/* Corner Decorations */}
-                <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 border-cyber-cyan/0 group-hover:border-cyber-cyan/50 rounded-tl-2xl transition-all duration-500" />
-                <div className="absolute bottom-0 right-0 w-12 h-12 border-r-2 border-b-2 border-cyber-cyan/0 group-hover:border-cyber-cyan/50 rounded-br-2xl transition-all duration-500" />
             </div>
 
-            <div className="p-5 flex-grow flex flex-col">
-                <div className="text-xs text-cyber-cyan mb-2 font-medium uppercase tracking-wider">{product.category.name}</div>
-                <h3 className="text-lg font-semibold mb-3 line-clamp-2 transition-colors group-hover:text-cyber-cyan text-white">
+            <div className="p-5 flex-grow flex flex-col relative z-20 bg-white dark:bg-[#0a0a0a]">
+                <div className="text-[10px] text-brand-cyan mb-2 font-bold uppercase tracking-widest">{product.category.name}</div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 transition-colors group-hover:text-brand-cyan">
                     {product.title}
                 </h3>
-                <div className="mt-auto pt-3 border-t border-white/5">
+                <div className="mt-auto pt-4 border-t border-slate-100 dark:border-white/5">
                     <div className="flex items-end justify-between">
                         <div className="flex flex-col">
                             {hasDiscount && (
-                                <span className="text-sm text-gray-500 line-through mb-0.5">
+                                <span className="text-sm text-slate-400 dark:text-slate-500 line-through mb-0.5 font-medium">
                                     ₺{originalPrice?.toLocaleString()}
                                 </span>
                             )}
-                            <span className={`text-2xl font-bold ${hasDiscount ? "text-red-400" : "gradient-text-cyan"}`}>
+                            <span className={`text-2xl font-black tracking-tight ${hasDiscount ? "text-brand-violet" : "text-slate-900 dark:text-white"}`}>
                                 ₺{price.toLocaleString()}
                             </span>
                         </div>
-                        <button className="p-3 bg-gradient-cyber rounded-xl transition-all duration-300 text-surface-dark hover:shadow-glow-cyan hover:scale-105">
-                            <ShoppingCart className="w-5 h-5" />
-                        </button>
+                        <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:bg-brand-cyan group-hover:text-white transition-all shadow-sm group-hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                            <ShoppingCart className="w-4 h-4" />
+                        </div>
                     </div>
                 </div>
             </div>

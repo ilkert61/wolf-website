@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Clock, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Clock, ArrowRight, Activity } from "lucide-react";
 import Link from "next/link";
 
 interface StatsProps {
@@ -18,9 +18,10 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             title: "Toplam Ürün",
             value: stats.productCount,
             icon: ShoppingBag,
-            color: "text-blue-400",
-            bg: "bg-blue-400/10",
-            trend: "+12%",
+            color: "text-blue-500",
+            bg: "bg-blue-500/10",
+            border: "group-hover:border-blue-500/50",
+            trend: "+12% Artış",
             trendUp: true,
             link: "/wolf-admin-1392a14/products"
         },
@@ -29,9 +30,10 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             value: stats.pendingFinanceCount,
             total: stats.financeCount,
             icon: DollarSign,
-            color: "text-green-400",
-            bg: "bg-green-400/10",
-            trend: "Aksiyon Gerekli",
+            color: "text-emerald-500",
+            bg: "bg-emerald-500/10",
+            border: "group-hover:border-emerald-500/50",
+            trend: stats.pendingFinanceCount > 0 ? "Aksiyon Gerekli" : "Tümü Onaylandı",
             trendUp: stats.pendingFinanceCount > 0,
             link: "/wolf-admin-1392a14/finance"
         },
@@ -39,10 +41,11 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             title: "İkinci El Talep",
             value: stats.pendingSecondHandCount,
             total: stats.secondHandCount,
-            icon: Smartphone,
-            color: "text-purple-400",
-            bg: "bg-purple-400/10",
-            trend: "Yeni",
+            icon: Activity,
+            color: "text-brand-violet",
+            bg: "bg-brand-violet/10",
+            border: "group-hover:border-brand-violet/50",
+            trend: "Yeni Talepler",
             trendUp: stats.pendingSecondHandCount > 0,
             link: "/wolf-admin-1392a14/second-hand"
         },
@@ -50,8 +53,9 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             title: "Aktif Kategoriler",
             value: stats.categoryCount,
             icon: TrendingUp,
-            color: "text-orange-400",
-            bg: "bg-orange-400/10",
+            color: "text-brand-cyan",
+            bg: "bg-brand-cyan/10",
+            border: "group-hover:border-brand-cyan/50",
             trend: "Stabil",
             trendUp: true,
             link: "/wolf-admin-1392a14/categories"
@@ -66,28 +70,28 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
                     <Link
                         key={idx}
                         href={widget.link}
-                        className="group relative overflow-hidden bg-[#16181d] border border-white/5 p-6 rounded-2xl hover:border-white/10 transition-all hover:-translate-y-1"
+                        className={`group relative overflow-hidden bg-[#0a0a0a] border border-white/5 p-6 rounded-[2rem] hover:shadow-xl transition-all duration-500 ${widget.border} hover:-translate-y-1 block`}
                     >
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Icon className={`w-16 h-16 ${widget.color}`} />
+                        <div className="absolute -top-4 -right-4 p-8 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+                            <Icon className={`w-24 h-24 ${widget.color}`} />
                         </div>
 
                         <div className="relative z-10">
-                            <div className={`w-12 h-12 rounded-xl ${widget.bg} flex items-center justify-center mb-4`}>
-                                <Icon className={`w-6 h-6 ${widget.color}`} />
+                            <div className={`w-14 h-14 rounded-2xl ${widget.bg} flex items-center justify-center mb-6 shadow-sm`}>
+                                <Icon className={`w-7 h-7 ${widget.color}`} />
                             </div>
 
-                            <div className="text-gray-400 text-sm font-medium mb-1">{widget.title}</div>
-                            <div className="flex items-end gap-2">
-                                <div className="text-3xl font-bold text-white leading-none">{widget.value}</div>
-                                {widget.total && (
-                                    <div className="text-sm text-gray-500 mb-1">/ {widget.total}</div>
+                            <div className="text-slate-400 text-sm font-bold mb-2 tracking-wide">{widget.title}</div>
+                            <div className="flex items-end gap-2 mb-4">
+                                <div className="text-4xl font-black text-white leading-none tracking-tight">{widget.value}</div>
+                                {widget.total !== undefined && (
+                                    <div className="text-sm font-bold text-slate-500 mb-1">/ {widget.total}</div>
                                 )}
                             </div>
 
-                            <div className="mt-4 flex items-center gap-2 text-xs">
-                                <span className={`flex items-center gap-1 font-medium ${widget.trendUp ? 'text-emerald-400' : 'text-gray-500'}`}>
-                                    {widget.trendUp ? <TrendingUp className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className={`flex items-center gap-1.5 font-bold px-2.5 py-1 rounded-md ${widget.trendUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-400'}`}>
+                                    {widget.trendUp ? <TrendingUp className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
                                     {widget.trend}
                                 </span>
                             </div>
@@ -97,24 +101,4 @@ export default function DashboardWidgets({ stats }: { stats: StatsProps }) {
             })}
         </div>
     );
-}
-
-function Smartphone(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-            <path d="M12 18h.01" />
-        </svg>
-    )
 }

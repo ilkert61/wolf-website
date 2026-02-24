@@ -48,14 +48,11 @@ export default function Navbar() {
         fetchCategories();
     }, []);
 
-    // Close mobile menu when route changes
     useEffect(() => {
         setIsOpen(false);
     }, [pathname]);
 
     if (isAdminRoute || isAuthRoute) return null;
-
-    // Special logic for Electronic Finance page - hide navbar
     if (pathname === '/elektronik-finans') return null;
 
     const links = [
@@ -67,144 +64,140 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${scrolled
-            ? 'bg-[#050505]/80 backdrop-blur-xl border-b border-white/5'
+        <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled
+            ? 'premium-glass'
             : 'bg-transparent border-b border-transparent'
             }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-20 relative">
+                <div className="flex items-center justify-between h-20">
                     {/* Logo Section */}
-                    <div className="flex items-center gap-2">
-                        <Link href="/" className="flex items-center gap-2 md:gap-4 group" onClick={() => setIsOpen(false)}>
-                            <div className="relative w-16 h-16 md:w-24 md:h-24 -my-4 transition-all duration-500 group-hover:scale-105">
-                                <img
-                                    src="/logo.png"
-                                    alt="Wolf Bilişim Logo"
-                                    className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.6)] md:drop-shadow-[0_0_20px_rgba(6,182,212,0.6)] group-hover:drop-shadow-[0_0_30px_rgba(6,182,212,0.8)] transition-all duration-500"
-                                />
+                    <Link href="/" className="flex items-center gap-3 group" onClick={() => setIsOpen(false)}>
+                        <div className="relative w-12 h-12 transition-transform duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                            <img
+                                src="/logo.png"
+                                alt="Wolf Bilişim Logo"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
+                        <span className="text-xl md:text-2xl font-bold hidden sm:block text-slate-900 dark:text-white tracking-tight">
+                            Wolf Bilişim
+                        </span>
+                    </Link>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden lg:flex items-center gap-1 bg-white/50 dark:bg-black/20 backdrop-blur-md px-2 py-1.5 rounded-2xl border border-slate-200/50 dark:border-white/5 shadow-sm">
+                        <Link
+                            href="/"
+                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${pathname === '/' ? 'bg-white dark:bg-white/10 text-brand-cyan shadow-sm dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}
+                        >
+                            Anasayfa
+                        </Link>
+
+                        {/* Products Dropdown */}
+                        <div
+                            className="relative"
+                            onMouseEnter={() => setIsProductsOpen(true)}
+                            onMouseLeave={() => setIsProductsOpen(false)}
+                        >
+                            <button className={`flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${pathname.startsWith('/products') ? 'bg-white dark:bg-white/10 text-brand-cyan shadow-sm dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}>
+                                Ürünler
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isProductsOpen ? 'rotate-180 text-brand-cyan' : ''}`} />
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            <div className={`absolute top-full left-0 pt-3 w-64 transition-all duration-300 origin-top ${isProductsOpen ? 'opacity-100 scale-y-100 visible z-50' : 'opacity-0 scale-y-95 invisible -z-10'}`}>
+                                <div className="premium-card py-2">
+                                    <Link
+                                        href="/products"
+                                        className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-slate-800 dark:text-white hover:text-brand-cyan dark:hover:text-brand-cyan hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-b border-slate-100 dark:border-white/5"
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                                        Tüm Ürünleri Gör
+                                    </Link>
+                                    <div className="pt-1">
+                                        {categories.map((cat) => (
+                                            <DesktopMenuItem key={cat.id} category={cat} />
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
-                            <span className="text-xl md:text-2xl font-bold gradient-text hidden sm:block">
-                                Wolf Bilişim
+                        </div>
+
+                        {links.slice(2).map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                // @ts-ignore
+                                target={link.target}
+                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${pathname === link.href ? 'bg-white dark:bg-white/10 text-brand-cyan shadow-sm dark:shadow-[0_0_10px_rgba(255,255,255,0.05)]' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
+                                    }`}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="hidden md:flex items-center gap-3">
+                        <Link
+                            href="/elektronik-finans"
+                            target="_blank"
+                            className="group relative px-6 py-2.5 rounded-full text-sm font-bold overflow-hidden bg-slate-900 dark:bg-brand-cyan text-white dark:text-slate-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/20 to-brand-violet/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <span className="relative flex items-center gap-2">
+                                Finans Başvurusu
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </span>
                         </Link>
                     </div>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:block">
-                        <div className="ml-10 flex items-baseline space-x-1">
-                            <Link
-                                href="/"
-                                className="relative px-4 py-2 rounded-xl text-sm font-medium text-gray-300 transition-all duration-300 hover:text-cyber-cyan group overflow-hidden"
-                            >
-                                <span className="relative z-10">Anasayfa</span>
-                                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-cyber transition-all duration-300 group-hover:w-3/4 rounded-full" />
-                            </Link>
-
-                            {/* Products Dropdown */}
-                            <div
-                                className="relative group"
-                                onMouseEnter={() => setIsProductsOpen(true)}
-                                onMouseLeave={() => setIsProductsOpen(false)}
-                            >
-                                <button className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium text-gray-300 transition-all duration-300 hover:text-cyber-cyan">
-                                    Ürünler
-                                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isProductsOpen ? 'rotate-180' : ''}`} />
-                                </button>
-
-                                {/* Dropdown Menu */}
-                                <div className={`absolute top-full left-0 pt-4 w-60 transition-all duration-300 ${isProductsOpen ? 'opacity-100 translate-y-0 visible z-50' : 'opacity-0 translate-y-2 invisible -z-10'}`}>
-                                    <div className="glass rounded-2xl shadow-2xl shadow-cyber-cyan/10 overflow-visible border border-white/5 bg-[#0a0a0a]/95 backdrop-blur-xl">
-                                        <Link
-                                            href="/products"
-                                            className="block px-5 py-3.5 text-sm font-medium text-white hover:text-cyber-cyan hover:bg-white/5 transition-all border-b border-white/5"
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan" />
-                                                Tüm Ürünler
-                                            </span>
-                                        </Link>
-
-                                        <div className="py-1">
-                                            {categories.map((cat) => (
-                                                <DesktopMenuItem key={cat.id} category={cat} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {links.slice(1).map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    // @ts-ignore
-                                    target={link.target}
-                                    className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group overflow-hidden ${
-                                        // @ts-ignore
-                                        link.special
-                                            ? 'text-cyber-violet border border-cyber-violet/30 bg-cyber-violet/10 hover:bg-cyber-violet/20 shadow-[0_0_15px_-5px_rgba(139,92,246,0.5)]'
-                                            : 'text-gray-300 hover:text-cyber-cyan'
-                                        }`}
-                                >
-                                    <span className="relative z-10">{link.name}</span>
-                                    {/* @ts-ignore */}
-                                    {!link.special && (
-                                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-cyber transition-all duration-300 group-hover:w-3/4 rounded-full" />
-                                    )}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Mobile Menu Button - Z-index fixed */}
-                    <div className="md:hidden relative z-[60]">
+                    {/* Mobile Menu Button */}
+                    <div className="md:hidden">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="inline-flex items-center justify-center p-2 rounded-full text-gray-400 hover:text-cyber-cyan hover:bg-cyber-cyan/10 focus:outline-none transition-all border border-transparent"
+                            className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-brand-cyan hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
                         >
-                            {isOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+                            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* FULL SCREEN MOBILE MENU OVERLAY */}
+            {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="md:hidden fixed inset-0 z-50 bg-[#050505]/95 backdrop-blur-2xl flex flex-col pt-24 px-6 overflow-y-auto"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border-b border-slate-200 dark:border-white/10 overflow-hidden"
                     >
-                        {/* Background Decor */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-cyan/10 rounded-full blur-[100px] pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyber-violet/10 rounded-full blur-[100px] pointer-events-none" />
-
-                        <div className="relative z-10 space-y-6 pb-12">
-                            {/* Products Section */}
+                        <div className="px-4 pt-4 pb-8 space-y-6 max-h-[85vh] overflow-y-auto">
+                            {/* Products Mobile */}
                             <div className="space-y-3">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">Mağaza</h3>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <Link href="/products" onClick={() => setIsOpen(false)} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all">
-                                        <ShoppingBag className="w-6 h-6 text-cyber-cyan" />
-                                        <span className="text-sm font-medium text-white">Tüm Ürünler</span>
+                                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider pl-2">Mağaza</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Link href="/products" onClick={() => setIsOpen(false)} className="premium-card p-4 flex flex-col items-center gap-3 hover:border-brand-cyan/30">
+                                        <div className="w-10 h-10 rounded-full bg-brand-cyan/10 flex items-center justify-center">
+                                            <ShoppingBag className="w-5 h-5 text-brand-cyan" />
+                                        </div>
+                                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Tüm Ürünler</span>
                                     </Link>
                                     {categories.slice(0, 3).map(cat => (
-                                        <Link key={cat.id} href={`/products?categoryId=${cat.id}`} onClick={() => setIsOpen(false)} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-white/10 active:scale-[0.98] transition-all">
-                                            <div className="w-6 h-6 rounded-full bg-cyber-cyan/20 flex items-center justify-center">
-                                                <span className="w-1.5 h-1.5 bg-cyber-cyan rounded-full" />
+                                        <Link key={cat.id} href={`/products?categoryId=${cat.id}`} onClick={() => setIsOpen(false)} className="premium-card p-4 flex flex-col items-center gap-3 hover:border-brand-cyan/30">
+                                            <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                                                <span className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full" />
                                             </div>
-                                            <span className="text-sm font-medium text-white">{cat.name}</span>
+                                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">{cat.name}</span>
                                         </Link>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Main Links */}
+                            {/* Links Mobile */}
                             <div className="space-y-2">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2 mt-4">Hizmetler</h3>
+                                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider pl-2">Menü</h3>
                                 <div className="flex flex-col gap-2">
                                     {links.map((link) => (
                                         <Link
@@ -213,23 +206,25 @@ export default function Navbar() {
                                             // @ts-ignore
                                             target={link.target}
                                             onClick={() => setIsOpen(false)}
-                                            className={`flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+                                            className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${
                                                 // @ts-ignore
                                                 link.special
-                                                    ? "bg-cyber-violet/10 border-cyber-violet/30 text-white"
-                                                    : "bg-white/5 border-white/5 text-gray-300 hover:text-white"
+                                                    ? "bg-brand-cyan dark:bg-brand-cyan/20 border-brand-cyan text-white dark:text-brand-cyan shadow-lg shadow-brand-cyan/20"
+                                                    : "bg-white dark:bg-[#0a0a0a] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-brand-cyan/30"
                                                 }`}
                                         >
-                                            {link.name === "Anasayfa" && <Home className="w-5 h-5 opacity-70" />}
-                                            {link.name === "Elektronik Finans" && <CreditCard className="w-5 h-5 text-cyber-violet" />}
-                                            {link.name === "Teknik Servis" && <Wrench className="w-5 h-5 text-cyber-cyan" />}
-                                            {link.name === "Cihaz Sat" && <Smartphone className="w-5 h-5 text-cyber-emerald" />}
-                                            {link.name === "İletişim" && <Phone className="w-5 h-5 opacity-70" />}
-                                            {link.name === "Hizmetlerimiz" && <Wrench className="w-5 h-5 opacity-70" />}
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                                // @ts-ignore
+                                                link.special ? 'bg-white/20' : 'bg-slate-50 dark:bg-white/5'
+                                                }`}>
+                                                {link.name === "Anasayfa" && <Home className="w-4 h-4" />}
+                                                {link.name === "Elektronik Finans" && <CreditCard className="w-4 h-4" />}
+                                                {link.name === "Teknik Servis" && <Wrench className="w-4 h-4" />}
+                                                {link.name === "Cihaz Sat" && <Smartphone className="w-4 h-4" />}
+                                                {link.name === "İletişim" && <Phone className="w-4 h-4" />}
+                                            </div>
 
-                                            <span className="font-medium text-lg">{link.name}</span>
-                                            {/* @ts-ignore */}
-                                            {link.special && <span className="ml-auto text-xs font-bold bg-cyber-violet/20 px-2 py-1 rounded text-cyber-violet">POPÜLER</span>}
+                                            <span className="font-semibold">{link.name}</span>
                                         </Link>
                                     ))}
                                 </div>
@@ -249,18 +244,18 @@ const DesktopMenuItem = ({ category }: { category: Category }) => {
         <div className="group/item relative">
             <Link
                 href={`/products?categoryId=${category.id}`}
-                className="flex items-center justify-between px-5 py-3 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all w-full"
+                className="flex items-center justify-between px-5 py-3 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-cyan dark:hover:text-brand-cyan hover:bg-slate-50 dark:hover:bg-white/5 transition-colors w-full"
             >
-                <div className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-gray-600 group-hover/item:bg-cyber-cyan transition-colors" />
+                <div className="flex items-center gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 group-hover/item:bg-brand-cyan transition-colors shadow-sm" />
                     {category.name}
                 </div>
-                {hasChildren && <ChevronRight className="w-4 h-4 text-gray-600 group-hover/item:text-cyber-cyan" />}
+                {hasChildren && <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-brand-cyan" />}
             </Link>
 
             {hasChildren && (
-                <div className="absolute left-full top-0 w-60 pl-2 opacity-0 translate-x-2 invisible group-hover/item:visible group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200">
-                    <div className="glass rounded-xl shadow-xl border border-white/5 bg-[#0a0a0a]/95 backdrop-blur-xl overflow-hidden py-1">
+                <div className="absolute left-full top-0 w-64 pl-2 opacity-0 translate-x-1 invisible group-hover/item:visible group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300">
+                    <div className="premium-card py-1">
                         {category.children!.map((child) => (
                             <DesktopMenuItem key={child.id} category={child} />
                         ))}

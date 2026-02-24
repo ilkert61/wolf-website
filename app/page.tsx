@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Shield, Zap, Truck, Cpu, Monitor, Headphones, Wrench, ChevronRight, Star, Clock } from "lucide-react";
+import { ArrowRight, Shield, Zap, Cpu, Monitor, Headphones, Wrench, ChevronRight, Clock, ShoppingBag, ChevronDown } from "lucide-react";
 
 import prisma from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
-
 import HeroCarousel from "@/components/HeroCarousel";
 
 export const dynamic = "force-dynamic";
@@ -19,33 +18,62 @@ export default async function Home() {
     });
 
     return (
-        <div className="flex flex-col pb-10">
-            {/* New Hero Carousel Section */}
-            <section className="container mx-auto px-4 pt-20 mb-8 md:mb-12">
-                <HeroCarousel />
+        <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#020202]">
+            {/* New Hero Carousel Section (Wrapper using premium dark mode logic) */}
+            <main className="relative bg-[#020202] pt-28 pb-24 overflow-hidden">
+                <div className="absolute inset-0 bg-mesh-dark opacity-50 mix-blend-screen pointer-events-none" />
+                <section className="container mx-auto px-4 relative z-10">
+                    <HeroCarousel />
+                </section>
+
+                {/* Scroll Down Indicator */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-50 animate-bounce hidden sm:block">
+                    <ChevronDown className="w-6 h-6 text-white" />
+                </div>
+            </main>
+
+            {/* Quick Links / Services Belt - Light/Hybrid section */}
+            <section className="container mx-auto px-4 -mt-12 relative z-20">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                        { title: "Hazır Sistemler", href: "/products", icon: <Monitor className="w-6 h-6" />, desc: "Toplama ve Hazır PC" },
+                        { title: "Teknik Servis", href: "/teknik-servis", icon: <Wrench className="w-6 h-6" />, desc: "Tamir ve Bakım" },
+                        { title: "Elektronik Finans", href: "/elektronik-finans", icon: <Cpu className="w-6 h-6" />, desc: "Kredi Kartına Taksit" },
+                        { title: "İletişim", href: "/contact", icon: <Headphones className="w-6 h-6" />, desc: "7/24 Destek" },
+                    ].map((item, index) => (
+                        <Link
+                            key={index}
+                            href={item.href}
+                            className="premium-glass bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-3xl p-6 rounded-3xl flex items-start gap-5 group hover:border-brand-cyan/40 hover:-translate-y-1 transition-all duration-300"
+                        >
+                            <div className="w-14 h-14 rounded-[1.2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 group-hover:scale-110 group-hover:bg-brand-cyan group-hover:text-white group-hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-all shrink-0">
+                                {item.icon}
+                            </div>
+                            <div className="pt-1">
+                                <h3 className="font-extrabold text-slate-900 dark:text-white tracking-tight group-hover:text-brand-cyan-dark dark:group-hover:text-brand-cyan transition-colors">{item.title}</h3>
+                                <p className="text-sm font-medium text-slate-500 mt-1">{item.desc}</p>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
             </section>
 
             {/* Weekly Deals Section */}
             {deals.length > 0 && (
-                <section className="container mx-auto px-4 py-12">
-                    <div className="flex flex-col md:flex-row items-end justify-between gap-4 mb-8">
+                <section className="container mx-auto px-4 py-24">
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-4 mb-10">
                         <div>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-500/30 mb-4 animate-pulse">
-                                <Clock className="w-4 h-4 text-orange-500" />
-                                <span className="text-sm font-bold text-orange-400 tracking-wide uppercase">Sınırlı Süre</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-violet/10 border border-brand-violet/20 text-brand-violet mb-4 shadow-sm">
+                                <Clock className="w-4 h-4" />
+                                <span className="text-[10px] font-bold tracking-widest uppercase">Sınırlı Süre</span>
                             </div>
-                            <h2 className="text-4xl font-black text-white">
-                                Haftanın <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Fırsatları</span>
+                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+                                Haftanın <span className="gradient-text">Fırsatları</span>
                             </h2>
                         </div>
-                        <div className="text-right hidden md:block">
-                            <p className="text-gray-400 text-sm mb-1">İndirimler sona ermeden yakala</p>
-                            <div className="flex items-center gap-1 font-mono text-xl text-white">
-                                <span className="bg-surface-light px-2 py-1 rounded text-red-400">03</span>:
-                                <span className="bg-surface-light px-2 py-1 rounded text-red-50">12</span>:
-                                <span className="bg-surface-light px-2 py-1 rounded text-red-50">45</span>
-                            </div>
-                        </div>
+                        <Link href="/products" className="hidden md:flex items-center gap-2 text-slate-500 hover:text-brand-cyan dark:hover:text-brand-cyan font-bold transition-colors uppercase text-xs tracking-wider">
+                            Tümünü Gör <ArrowRight className="w-4 h-4 ml-1" />
+                        </Link>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -56,187 +84,106 @@ export default async function Home() {
                 </section>
             )}
 
-            {/* Quick Links */}
-            <section className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                        { name: "Hazır Sistemler", href: "/products", icon: <Monitor className="w-6 h-6" />, color: "cyan" },
-                        { name: "Teknik Servis", href: "/teknik-servis", icon: <Wrench className="w-6 h-6" />, color: "emerald" },
-                        { name: "Elektronik Finans", href: "/elektronik-finans", icon: <Cpu className="w-6 h-6" />, color: "violet" },
-                        { name: "İletişim", href: "/contact", icon: <Headphones className="w-6 h-6" />, color: "rose" },
-                    ].map((item, index) => (
-                        <Link
-                            key={index}
-                            href={item.href}
-                            className="group glass-card p-5 rounded-2xl flex items-center gap-4 hover:border-cyber-cyan/50 transition-all duration-300"
-                        >
-                            <div className="w-12 h-12 rounded-xl bg-surface-medium flex items-center justify-center text-cyber-cyan group-hover:scale-110 transition-transform">
-                                {item.icon}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="font-semibold text-white group-hover:text-cyber-cyan transition-colors truncate">{item.name}</div>
-                                <div className="text-xs text-gray-500">Hızlı Erişim</div>
-                            </div>
-                            <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-cyber-cyan group-hover:translate-x-1 transition-all flex-shrink-0" />
-                        </Link>
-                    ))}
-                </div>
-            </section>
-
-
-
             {/* Premium Category Grid */}
-            <section className="container mx-auto px-4 py-16">
-                <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-10">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-emerald/30 mb-4">
-                            <Monitor className="w-4 h-4 text-cyber-emerald" />
-                            <span className="text-sm font-medium text-cyber-emerald">Ürün Kategorileri</span>
-                        </div>
-                        <h2 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent">
-                            Kategori <span className="text-cyber-cyan">Seç</span>
+            <section className="bg-slate-100 dark:bg-[#0a0a0a] border-y border-slate-200 dark:border-white/5 py-24 relative overflow-hidden">
+                <div className="absolute inset-0 bg-grid-slate-900 dark:bg-grid-white opacity-20" />
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="text-center max-w-2xl mx-auto mb-16">
+                        <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+                            Donanımın Zirvesi
                         </h2>
+                        <p className="text-slate-500 font-medium text-lg">
+                            İhtiyacınız olan premium iş istasyonları ve bireysel teknoloji çözümleri tek adreste.
+                        </p>
                     </div>
-                    <Link href="/products" className="group flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-                        Tüm Ürünler <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                </div>
 
-                {/* Fixed Premium Bento Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
-                    {/* Left Column - Main Card (Gaming PC) */}
-                    <Link href="/products" className="group relative h-[500px] rounded-3xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-700">
-                        {/* Image */}
-                        <img
-                            src="/category-gaming-pc.png"
-                            alt="Hazır Sistemler"
-                            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                        />
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90" />
-
-                        <div className="absolute inset-0 p-10 flex flex-col justify-end relative z-10 transition-transform duration-500 group-hover:-translate-y-2">
-                            <h3 className="text-4xl font-bold text-white mb-3 tracking-tight">
-                                Hazır Sistemler
-                            </h3>
-                            <p className="text-gray-300 mb-6 max-w-sm text-lg font-light">
-                                Profesyoneller ve oyuncular için optimize edilmiş yüksek performanslı iş istasyonları.
-                            </p>
-                            <div className="flex items-center gap-3 text-white font-medium group/btn w-fit">
-                                <span className="border-b border-white/30 pb-0.5 group-hover/btn:border-white transition-colors">Koleksiyonu İncele</span>
-                                <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* Right Column - Stacked Cards */}
-                    <div className="flex flex-col gap-6">
-                        {/* Laptops */}
-                        <Link href="/products" className="group relative h-[238px] rounded-3xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-700">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+                        {/* Left Main */}
+                        <Link href="/products" className="group relative h-[500px] rounded-[2.5rem] overflow-hidden shadow-xl dark:shadow-2xl transition-all duration-500 border border-slate-200/50 dark:border-white/10">
                             <img
-                                src="/category-laptop.png"
-                                alt="Dizüstü Bilgisayarlar"
-                                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                                src="/category-gaming-pc.png"
+                                alt="Hazır Sistemler"
+                                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent opacity-90" />
-
-                            <div className="absolute inset-0 p-8 flex flex-col justify-center relative z-10">
-                                <h3 className="text-2xl font-bold text-white mb-2">
-                                    Dizüstü Bilgisayarlar
-                                </h3>
-                                <div className="w-8 h-1 bg-cyber-violet rounded-full group-hover:w-16 transition-all duration-500" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                            <div className="absolute inset-0 p-12 flex flex-col justify-end">
+                                <h3 className="text-4xl font-extrabold text-white mb-3 tracking-tight">Hazır Sistemler</h3>
+                                <p className="text-slate-300 font-medium mb-8 max-w-md leading-relaxed">
+                                    Yüksek performanslı iş istasyonları ve kesintisiz kurumsal donanım mimarileri.
+                                </p>
+                                <span className="inline-flex items-center gap-2 text-white font-bold bg-white/10 w-fit px-6 py-3 rounded-full backdrop-blur-md border border-white/20 group-hover:bg-brand-cyan group-hover:border-brand-cyan transition-colors">
+                                    İncele <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </span>
                             </div>
                         </Link>
 
-                        {/* Parts */}
-                        <Link href="/products" className="group relative h-[238px] rounded-3xl overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-700">
-                            <img
-                                src="/category-parts.png"
-                                alt="Bilgisayar Parçaları"
-                                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent opacity-90" />
-
-                            <div className="absolute inset-0 p-8 flex flex-col justify-center relative z-10">
-                                <h3 className="text-2xl font-bold text-white mb-2">
-                                    Donanım & Parça
-                                </h3>
-                                <div className="w-8 h-1 bg-cyber-emerald rounded-full group-hover:w-16 transition-all duration-500" />
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Full Width Bottom Card (Peripherals) */}
-                <Link href="/products" className="group relative h-[220px] rounded-[2rem] overflow-hidden glass-card border border-white/5 hover:border-cyber-rose/30 hover:shadow-[0_0_30px_-10px_rgba(244,63,94,0.3)] transition-all duration-500 mt-6 block">
-                    <img
-                        src="/category-peripherals.png"
-                        alt="Bilgisayar Ekipmanları"
-                        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent opacity-95" />
-
-                    <div className="absolute inset-0 p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between relative z-10">
-                        <div className="max-w-xl">
-                            <div className="inline-flex items-center gap-2 mb-3">
-                                <span className="w-2 h-2 rounded-full bg-cyber-rose animate-pulse" />
-                                <p className="text-sm text-cyber-rose font-bold tracking-wider uppercase">Pro Ekipmanlar</p>
-                            </div>
-                            <h3 className="text-3xl font-black text-white mb-3 group-hover:text-cyber-rose transition-colors drop-shadow-lg">
-                                Bilgisayar Ekipmanları
-                            </h3>
-                            <p className="text-gray-300 text-lg hidden sm:block">
-                                Klavye, mouse, kulaklık ve daha fazlası ile oyun deneyimini zirveye taşı.
-                            </p>
-                        </div>
-                        <div className="mt-6 md:mt-0 flex items-center gap-2 group/btn">
-                            <span className="text-white font-bold group-hover/btn:text-cyber-rose transition-colors">Koleksiyonu İncele</span>
-                            <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover/btn:bg-cyber-rose group-hover/btn:border-cyber-rose group-hover/btn:text-white transition-all">
-                                <ArrowRight className="w-5 h-5" />
-                            </div>
-                        </div>
-                    </div>
-                </Link>
-            </section>
-
-            {/* Services Preview */}
-            <section className="container mx-auto px-4 py-16">
-                <div className="glass-card rounded-3xl p-8 md:p-12 relative overflow-hidden">
-                    {/* Background */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-cyan/10 rounded-full blur-[100px] pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyber-violet/10 rounded-full blur-[100px] pointer-events-none" />
-
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-cyber-emerald/30 mb-6">
-                                <Wrench className="w-4 h-4 text-cyber-emerald" />
-                                <span className="text-sm font-medium text-cyber-emerald">Servis Hizmetleri</span>
-                            </div>
-                            <h2 className="text-3xl font-black mb-4">
-                                <span className="text-white">Profesyonel </span>
-                                <span className="gradient-text">Teknik Destek</span>
-                            </h2>
-                            <p className="text-gray-400 mb-8 leading-relaxed">
-                                Bilgisayar tamir, bakım, donanım yükseltme ve özel PC toplama hizmetlerimizle
-                                tüm teknoloji ihtiyaçlarınıza çözüm sunuyoruz.
-                            </p>
-                            <Link href="/teknik-servis" className="cyber-button inline-flex items-center gap-2">
-                                <span>Hizmetlerimiz</span> <ArrowRight className="w-5 h-5" />
+                        {/* Right Stack */}
+                        <div className="flex flex-col gap-6">
+                            <Link href="/products" className="group relative h-[238px] rounded-[2rem] overflow-hidden shadow-lg border border-slate-200/50 dark:border-white/10 transition-all duration-500">
+                                <img
+                                    src="/category-laptop.png"
+                                    alt="Dizüstü Bilgisayarlar"
+                                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+                                <div className="absolute inset-0 p-10 flex flex-col justify-center">
+                                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">Laptop & PC</h3>
+                                    <span className="inline-flex items-center gap-2 text-white font-semibold">
+                                        Keşfet <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-brand-cyan" />
+                                    </span>
+                                </div>
+                            </Link>
+                            <Link href="/products" className="group relative h-[238px] rounded-[2rem] overflow-hidden shadow-lg border border-slate-200/50 dark:border-white/10 transition-all duration-500">
+                                <img
+                                    src="/category-parts.png"
+                                    alt="Donanım Parçaları"
+                                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+                                <div className="absolute inset-0 p-10 flex flex-col justify-center">
+                                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">Donanım Birimleri</h3>
+                                    <span className="inline-flex items-center gap-2 text-white font-semibold">
+                                        Keşfet <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-brand-cyan" />
+                                    </span>
+                                </div>
                             </Link>
                         </div>
+                    </div>
+                </div>
+            </section>
 
-                        <div className="grid grid-cols-2 gap-4">
+            {/* Corporate Services */}
+            <section className="py-24 relative overflow-hidden bg-white dark:bg-[#020202]">
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan mb-8 font-bold text-[10px] uppercase tracking-widest shadow-sm">
+                                <Shield className="w-3.5 h-3.5" /> Müşteri Odaklı
+                            </div>
+                            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6">
+                                Kurumsal Bilişim <br className="hidden md:block" />
+                                <span className="text-slate-400 dark:text-slate-500">Altyapı Hizmetleri</span>
+                            </h2>
+                            <p className="text-slate-500 font-medium text-lg mb-10 leading-relaxed max-w-lg">
+                                Güçlü, güvenilir ve kesintisiz teknoloji çözümleri.
+                                Bireysel tamir işlemlerinden, büyük ölçekli donanım tedarikine kadar profesyonel hizmet sunuyoruz.
+                            </p>
+                            <Link href="/teknik-servis" className="premium-button w-fit group">
+                                Servisleri İncele <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </div>
+                        <div className="grid grid-cols-2 gap-5">
                             {[
-                                { icon: <Monitor className="w-6 h-6" />, title: "PC Toplama" },
-                                { icon: <Wrench className="w-6 h-6" />, title: "Tamir & Bakım" },
-                                { icon: <Cpu className="w-6 h-6" />, title: "Donanım Yükseltme" },
-                                { icon: <Clock className="w-6 h-6" />, title: "7/24 Destek" },
-                            ].map((service, index) => (
-                                <div key={index} className="glass p-5 rounded-2xl group hover:border-cyber-cyan/30 transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-surface-medium flex items-center justify-center text-cyber-cyan mb-3 group-hover:scale-110 transition-transform">
-                                        {service.icon}
+                                { title: "Kurulum", icon: <Monitor className="w-6 h-6" /> },
+                                { title: "Bakım", icon: <Wrench className="w-6 h-6" /> },
+                                { title: "Tedarik", icon: <Cpu className="w-6 h-6" /> },
+                                { title: "Çözüm", icon: <Zap className="w-6 h-6" /> },
+                            ].map((s, i) => (
+                                <div key={i} className="premium-card p-8 group">
+                                    <div className="w-14 h-14 bg-slate-50 dark:bg-white/5 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-brand-cyan/10 group-hover:text-brand-cyan transition-colors mb-6 shadow-sm border border-slate-100 dark:border-white/5">
+                                        {s.icon}
                                     </div>
-                                    <div className="font-semibold text-white">{service.title}</div>
+                                    <h4 className="font-extrabold text-lg text-slate-900 dark:text-white">{s.title}</h4>
                                 </div>
                             ))}
                         </div>
@@ -245,28 +192,26 @@ export default async function Home() {
             </section>
 
             {/* Final CTA */}
-            <section className="container mx-auto px-4 py-16">
-                <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-5xl font-black mb-4">
-                        <span className="text-white">Wolf Bilişim </span>
-                        <span className="gradient-text">Farkı</span>
+            <section className="container mx-auto px-4 py-24 text-center max-w-4xl">
+                <div className="premium-card p-12 md:p-16 relative overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
+                    <div className="absolute inset-0 bg-mesh-dark opacity-10 mix-blend-multiply dark:mix-blend-screen pointer-events-none" />
+                    <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tight relative z-10">
+                        Destek İçin Hazırız
                     </h2>
-                    <p className="text-gray-400 mb-10 text-lg">
-                        Uzman ekibimiz, ihtiyaçlarınıza özel çözümler sunmak için hazır.
+                    <p className="text-slate-500 font-medium mb-10 text-lg relative z-10 max-w-xl mx-auto">
+                        Cihaz tamiri, kurumsal bakım anlaşmaları veya yeni cihaz alımı için uzman ekibimize ulaşın.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/contact" className="cyber-button group px-10">
-                            <span className="flex items-center gap-2">
-                                İletişime Geç <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </span>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+                        <Link href="/contact" className="premium-button">
+                            İletişim Formu <ArrowRight className="w-4 h-4 ml-1" />
                         </Link>
                         <a
                             href="https://wa.me/905343398185"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-10 py-4 glass rounded-xl font-semibold text-cyber-emerald hover:border-cyber-emerald/50 hover:shadow-glow-emerald transition-all duration-300 flex items-center justify-center gap-2"
+                            className="premium-button text-slate-900 bg-white hover:bg-slate-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 border border-slate-200 dark:border-white/10"
                         >
-                            WhatsApp
+                            WhatsApp Destek
                         </a>
                     </div>
                 </div>

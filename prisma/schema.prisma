@@ -7,38 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Category {
-  id          Int       @id @default(autoincrement())
-  name        String
-  slug        String    @unique
-  description String?
-  imageUrl    String?
-  attributes  String?   // JSON definition of attributes for this category: ["Brand", "CPU"]
-  parentId    Int?
-  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children    Category[] @relation("CategoryHierarchy")
-  products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  order       Int       @default(0)
+// -- Kullanıcı Rolleri (RBAC) --
+enum Role {
+  SUPER_ADMIN
+  EDITOR
+  SUPPORT
 }
 
+model Admin {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  passwordHash String
+  role         Role          @default(SUPER_ADMIN)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  priceLogs    PriceLog[]
+  activityLogs ActivityLog[]
+}
+
+// -- Kurumsal Kategori Sistemi --
+model Category {
+  id              Int        @id @default(autoincrement())
+  name            String
+  slug            String     @unique
+  description     String?
+  imageUrl        String?
+  attributes      String?    // JSON definition of attributes: ["Brand", "CPU"]
+  parentId        Int?
+  parent          Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children        Category[] @relation("CategoryHierarchy")
+  products        Product[]
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  order           Int        @default(0)
+}
+
+// -- Akıllı Döviz Endeksli Ürün --
 model Product {
-  id          Int            @id @default(autoincrement())
-  title       String
-  description String
-  price       Decimal
-  categoryId  Int
-  category    Category       @relation(fields: [categoryId], references: [id])
-  images      ProductImage[]
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String
+  
+  // Sabit Gösterge Fiyatı
+  price           Decimal
+  
+  // Forex Fiyatlandırma Sistemi
+  basePrice       Decimal?       // Yabancı veya Ana Para Birimi (Örn: 1000)
+  currency        String         @default("TRY") // TRY, USD, EUR
+  exchangeRateUsed Decimal?      // O Fiyat belirlenirkenki güncel kur (Örn: 34.50)
+  
+  categoryId      Int
+  category        Category       @relation(fields: [categoryId], references: [id])
+  images          ProductImage[]
   attributes      String?        // JSON values: {"Brand": "Asus", "CPU": "i5"}
   status          String         @default("On Sale") // On Sale, Sold
   stock           Int            @default(0)
   originalPrice   Decimal?
   discountEndDate DateTime?
   isDeal          Boolean        @default(false)
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+
+  priceLogs       PriceLog[]
 }
 
 model ProductImage {
@@ -51,10 +94,29 @@ model ProductImage {
   createdAt DateTime @default(now())
 }
 
-model Admin {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  passwordHash String
+// -- Fiyat Değişim Logları --
+model PriceLog {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  oldPrice    Decimal
+  newPrice    Decimal
+  currency    String   @default("TRY")
+  reason      String
+  adminId     Int?     // Who changed it (null if system auto-update)
+  admin       Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+}
+
+// -- Aktivite Denetim Logları (Audit Trails) --
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  adminId     Int?
+  admin       Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  action      String   // Örn: "Ürün Silindi", "Giriş Yapıldı"
+  details     String?  // JSON string: ne değiştirildi?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
 }
 
 // Elektronik Finans Başvuruları
@@ -104,14 +166,21 @@ model SecondHandListing {
   updatedAt      DateTime @updatedAt
 }
 
+// -- Sistem Kuralları ve Dinamik Site Ayarları --
 model SiteSettings {
-  id             Int      @id @default(autoincrement())
-  siteName       String   @default("Wolf Bilişim")
-  description    String?  @default("Teknoloji Çözüm Ortağınız")
-  contactEmail   String?
-  contactPhone   String?
-  address        String?
-  socialMedia    String?  // JSON: { instagram, facebook, twitter, youtube, tiktok }
-  maintenanceMode Boolean @default(false)
-  updatedAt      DateTime @updatedAt
+  id                 Int      @id @default(autoincrement())
+  siteName           String   @default("Wolf Bilişim Premium")
+  description        String?  @default("Kurumsal Teknoloji Çözüm Ortağınız")
+  contactEmail       String?
+  contactPhone       String?
+  address            String?
+  socialMedia        String?  // JSON: { instagram, facebook, twitter, youtube, tiktok }
+  
+  maintenanceMode    Boolean  @default(false)
+  announcementActive Boolean  @default(false)
+  announcementText   String?  // Örn: "Kurumsal Mac alımlarında anında kredi fırsatı!"
+  
+  exchangeThreshold  Decimal  @default(10.0) // Kritik: %10 değişim olmadığı sürece fiyat değişmez
+  
+  updatedAt          DateTime @updatedAt
 }

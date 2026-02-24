@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Tag, FileText, LogOut, Smartphone, Settings, Users, Wrench } from "lucide-react";
+import { LayoutDashboard, Package, Tag, FileText, LogOut, Smartphone, Settings, ShieldAlert, History, Wrench } from "lucide-react";
 import { logoutAction } from "@/app/actions";
 
 export default function AdminSidebar() {
@@ -13,23 +13,29 @@ export default function AdminSidebar() {
         { name: "Ürünler", href: "/wolf-admin-1392a14/products", icon: Package },
         { name: "Kategoriler", href: "/wolf-admin-1392a14/categories", icon: Tag },
         { name: "Teknik Servis", href: "/wolf-admin-1392a14/repairs", icon: Wrench },
-        { name: "Finans Başvuruları", href: "/wolf-admin-1392a14/finance", icon: FileText },
-        { name: "İkinci El", href: "/wolf-admin-1392a14/second-hand", icon: Smartphone },
+        { name: "Finans Başvuru", href: "/wolf-admin-1392a14/finance", icon: FileText },
+        { name: "İkinci El Alım", href: "/wolf-admin-1392a14/second-hand", icon: Smartphone },
+    ];
+
+    const systemItems = [
+        { name: "Fiyat Geçmişi", href: "/wolf-admin-1392a14/price-logs", icon: History },
+        { name: "Aktivite Logları", href: "/wolf-admin-1392a14/activity-logs", icon: ShieldAlert },
+        { name: "Site Ayarları", href: "/wolf-admin-1392a14/settings", icon: Settings },
     ];
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(path + "/");
 
     return (
-        <aside className="fixed left-0 top-0 h-full w-72 bg-[#0f1115] border-r border-white/5 flex flex-col z-50">
+        <aside className="fixed left-0 top-0 h-full w-72 bg-[#020202] border-r border-white/5 flex flex-col z-50">
             {/* Logo Area */}
-            <div className="h-20 flex items-center gap-3 px-6 border-b border-white/5 bg-gradient-to-r from-cyan-500/5 to-transparent">
-                <div className="relative w-10 h-10">
-                    <img src="/logo.png" alt="Wolf Logo" className="w-full h-full object-contain" />
-                    <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full" />
+            <div className="h-24 flex items-center gap-4 px-8 border-b border-white/5 bg-gradient-to-br from-white/5 to-transparent relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-cyan/10 blur-[50px] pointer-events-none" />
+                <div className="relative w-12 h-12 bg-white/5 rounded-2xl p-2 border border-white/10 shadow-lg flex items-center justify-center">
+                    <img src="/logo.png" alt="Wolf Logo" className="w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
                 </div>
-                <div>
-                    <h2 className="text-lg font-bold text-white leading-none tracking-tight">Wolf</h2>
-                    <span className="text-xs text-cyber-cyan tracking-widest uppercase">Admin</span>
+                <div className="flex flex-col">
+                    <h2 className="text-xl font-black text-white tracking-tight leading-none">Wolf Bilişim</h2>
+                    <span className="text-[10px] font-bold text-brand-cyan tracking-[0.2em] uppercase mt-1">Premium Admin</span>
                 </div>
             </div>
 
@@ -42,41 +48,62 @@ export default function AdminSidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${active
-                                ? "text-white bg-gradient-to-r from-cyan-500/20 to-blue-600/10 border border-cyan-500/20 shadow-[0_0_15px_-5px_rgba(6,182,212,0.3)]"
-                                : "text-gray-400 hover:text-white hover:bg-white/5"
+                            className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative overflow-hidden ${active
+                                ? "text-white bg-white/10 border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+                                : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                                 }`}
                         >
                             {active && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-transparent opacity-50" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/20 to-transparent opacity-50" />
                             )}
-                            <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? "text-cyber-cyan scale-110" : "group-hover:text-cyber-cyan group-hover:scale-110"}`} />
-                            <span className="font-medium relative z-10">{item.name}</span>
-                            {active && (
-                                <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-cyber-cyan shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
-                            )}
+                            <div className={`relative z-10 p-2 rounded-xl transition-all ${active ? "bg-brand-cyan shadow-[0_0_15px_rgba(6,182,212,0.4)] text-white" : "bg-black/30 group-hover:bg-white/10 text-slate-400 group-hover:text-white"}`}>
+                                <Icon className="w-5 h-5" />
+                            </div>
+                            <span className="font-bold relative z-10 text-[15px] tracking-wide">{item.name}</span>
                         </Link>
                     );
                 })}
 
-                <div className="my-6 border-t border-white/5 mx-2" />
+                <div className="my-8 mx-4 border-t border-white/5 relative">
+                    <span className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-[#020202] px-2 text-[10px] font-bold text-slate-600 tracking-widest uppercase">Denetim Merkezi</span>
+                </div>
 
-                <div className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sistem</div>
-
-                <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors group">
-                    <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="font-medium">Ayarlar</span>
-                </button>
+                {systemItems.map((item) => {
+                    const active = isActive(item.href);
+                    const Icon = item.icon;
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden ${active
+                                ? "text-white bg-white/10 border border-white/10"
+                                : "text-slate-500 hover:text-white hover:bg-white/5 border border-transparent"
+                                }`}
+                        >
+                            <Icon className={`relative z-10 w-5 h-5 transition-transform ${active ? "text-brand-violet" : "group-hover:text-brand-violet group-hover:rotate-12"}`} />
+                            <span className="font-bold relative z-10 text-sm">{item.name}</span>
+                        </Link>
+                    );
+                })}
             </nav>
 
-            {/* Footer / Logout */}
-            <div className="p-4 border-t border-white/5 bg-black/20">
+            {/* User Meta / Logout */}
+            <div className="p-6 border-t border-white/5 bg-[#0a0a0a]">
+                <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-cyan to-brand-violet flex items-center justify-center font-black text-white text-lg shadow-lg">
+                        A
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-white leading-none mb-1">Admin</p>
+                        <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Süper Admin</p>
+                    </div>
+                </div>
                 <button
                     onClick={() => logoutAction()}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all group"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 text-red-500 hover:text-white hover:bg-red-500/20 hover:border-red-500/30 border border-transparent rounded-xl transition-all font-bold group"
                 >
                     <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-medium">Çıkış Yap</span>
+                    <span>Oturumu Kapat</span>
                 </button>
             </div>
         </aside>
