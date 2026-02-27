@@ -18,16 +18,38 @@ export default function RepairPage() {
 
             if (files.length > 3) {
                 alert("En fazla 3 adet fotoğraf yükleyebilirsiniz.");
-                e.target.value = ""; // Reset input
+                e.target.value = "";
+                return;
+            }
+
+            // Validate file size and type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            const validFiles = files.filter(file => {
+                if (file.size > maxSize) {
+                    alert(`${file.name} boyutu 5 MB'dan büyük olamaz.`);
+                    return false;
+                }
+                if (!allowedTypes.includes(file.type)) {
+                    alert(`${file.name} sadece JPG, PNG veya WebP formatında olmalıdır.`);
+                    return false;
+                }
+                return true;
+            });
+
+            if (validFiles.length === 0) {
+                e.target.value = "";
                 return;
             }
 
             // Cleanup old previews
             filePreviews.forEach(url => URL.revokeObjectURL(url));
 
-            setSelectedFiles(files);
-            const newPreviews = files.map(file => URL.createObjectURL(file));
+            setSelectedFiles(validFiles);
+            const newPreviews = validFiles.map(file => URL.createObjectURL(file));
             setFilePreviews(newPreviews);
+            e.target.value = "";
         }
     };
 

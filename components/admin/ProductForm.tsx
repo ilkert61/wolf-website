@@ -116,11 +116,23 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-            const newImages = Array.from(files).map(file => ({
+            const validFiles = Array.from(files).filter(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`${file.name} boyutu 5 MB'dan büyük olamaz.`);
+                    return false;
+                }
+                if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                    alert(`${file.name} sadece JPG, PNG veya WebP formatında olmalıdır.`);
+                    return false;
+                }
+                return true;
+            });
+            const newImages = validFiles.map(file => ({
                 url: URL.createObjectURL(file),
                 file
             }));
             setImages([...images, ...newImages]);
+            e.target.value = '';
         }
     };
 

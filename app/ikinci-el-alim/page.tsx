@@ -101,9 +101,22 @@ export default function SecondHandPage() {
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
-        setUploading(true);
 
         const file = e.target.files[0];
+
+        // Client-side validation
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Dosya boyutu 5 MB'dan küçük olmalıdır.");
+            e.target.value = '';
+            return;
+        }
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            alert("Lütfen sadece JPG, PNG veya WebP formatında görsel yükleyin.");
+            e.target.value = '';
+            return;
+        }
+
+        setUploading(true);
         const data = new FormData();
         data.append("file", file);
 
