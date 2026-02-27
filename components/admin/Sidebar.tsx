@@ -35,7 +35,6 @@ export default function AdminSidebar() {
                 </div>
                 <div className="flex flex-col">
                     <h2 className="text-xl font-black text-white tracking-tight leading-none">Wolf Bilişim</h2>
-                    <span className="text-[10px] font-bold text-brand-cyan tracking-[0.2em] uppercase mt-1">Premium Admin</span>
                 </div>
             </div>
 
@@ -95,7 +94,7 @@ export default function AdminSidebar() {
                     </div>
                     <div>
                         <p className="text-sm font-bold text-white leading-none mb-1">Admin</p>
-                        <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Süper Admin</p>
+                        <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Yönetici</p>
                     </div>
                 </div>
                 <button

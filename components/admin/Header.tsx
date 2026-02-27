@@ -32,7 +32,7 @@ export default function AdminHeader() {
                 <div className="flex items-center gap-4 cursor-pointer group">
                     <div className="text-right hidden sm:block">
                         <div className="text-sm font-black text-white group-hover:text-brand-cyan transition-colors">Admin User</div>
-                        <div className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Süper Admin</div>
+                        <div className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Yönetici</div>
                     </div>
                     <div className="w-12 h-12 rounded-[1.1rem] bg-gradient-to-br from-brand-cyan to-brand-violet p-[2px] shadow-lg group-hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all">
                         <div className="w-full h-full rounded-[1rem] bg-[#020202] flex items-center justify-center overflow-hidden">

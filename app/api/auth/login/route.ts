@@ -3,87 +3,129 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { login } from "@/lib/auth";
 
-// Simple in-memory rate limiter for login attempts
-// Note: In a serverless environment, use Redis or similar
+// ── Rate Limiter ──
 const LOGIN_RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
-const MAX_LOGIN_ATTEMPTS = 5;
-const loginAttempts: Record<string, { count: number; firstAttempt: number }> = {};
+const MAX_LOGIN_ATTEMPTS_PER_USER = 5;
+const MAX_LOGIN_ATTEMPTS_PER_IP = 20; // Global IP limit (across all usernames)
 
-function checkLoginRateLimit(identifier: string): { allowed: boolean; remainingAttempts: number; retryAfter?: number } {
+interface LoginAttemptRecord {
+    count: number;
+    firstAttempt: number;
+}
+const loginAttempts: Record<string, LoginAttemptRecord> = {};
+
+function checkRateLimit(key: string, maxAttempts: number): { allowed: boolean; remainingAttempts: number; retryAfter?: number } {
     const now = Date.now();
-    const record = loginAttempts[identifier];
+    const record = loginAttempts[key];
 
     if (!record) {
-        loginAttempts[identifier] = { count: 1, firstAttempt: now };
-        return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS - 1 };
+        loginAttempts[key] = { count: 1, firstAttempt: now };
+        return { allowed: true, remainingAttempts: maxAttempts - 1 };
     }
 
     // Reset if window has passed
     if (now - record.firstAttempt > LOGIN_RATE_LIMIT_WINDOW) {
-        loginAttempts[identifier] = { count: 1, firstAttempt: now };
-        return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS - 1 };
+        loginAttempts[key] = { count: 1, firstAttempt: now };
+        return { allowed: true, remainingAttempts: maxAttempts - 1 };
     }
 
     // Check if limit exceeded
-    if (record.count >= MAX_LOGIN_ATTEMPTS) {
+    if (record.count >= maxAttempts) {
         const retryAfter = Math.ceil((LOGIN_RATE_LIMIT_WINDOW - (now - record.firstAttempt)) / 1000);
         return { allowed: false, remainingAttempts: 0, retryAfter };
     }
 
     record.count++;
-    return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS - record.count };
+    return { allowed: true, remainingAttempts: maxAttempts - record.count };
 }
 
-function resetLoginAttempts(identifier: string) {
-    delete loginAttempts[identifier];
+function resetLoginAttempts(key: string) {
+    delete loginAttempts[key];
+}
+
+// Cleanup stale entries every 100 requests to prevent memory leak
+let requestCounter = 0;
+function cleanupStaleEntries() {
+    requestCounter++;
+    if (requestCounter % 100 !== 0) return;
+    const now = Date.now();
+    for (const key of Object.keys(loginAttempts)) {
+        if (now - loginAttempts[key].firstAttempt > LOGIN_RATE_LIMIT_WINDOW) {
+            delete loginAttempts[key];
+        }
+    }
 }
 
 export async function POST(request: Request) {
     try {
+        cleanupStaleEntries();
+
         const body = await request.json();
         const { username, password } = body;
 
         if (!username || !password) {
             return NextResponse.json(
-                { error: "Username and password are required" },
+                { error: "Kullanıcı adı ve şifre gereklidir." },
                 { status: 400 }
             );
         }
 
-        // Rate limiting check using username as identifier
-        const rateLimit = checkLoginRateLimit(username);
-        if (!rateLimit.allowed) {
+        // Sanitize inputs
+        const cleanUsername = String(username).trim().slice(0, 100);
+        const cleanPassword = String(password).slice(0, 200);
+
+        // Extract IP for rate limiting
+        const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+        // 1. Global IP rate limit (prevents credential stuffing across usernames)
+        const ipLimit = checkRateLimit(`ip_${ip}`, MAX_LOGIN_ATTEMPTS_PER_IP);
+        if (!ipLimit.allowed) {
             return NextResponse.json(
                 {
-                    error: `Çok fazla başarısız giriş denemesi. ${rateLimit.retryAfter} saniye sonra tekrar deneyin.`,
-                    retryAfter: rateLimit.retryAfter
+                    error: `Çok fazla giriş denemesi. ${ipLimit.retryAfter} saniye sonra tekrar deneyin.`,
+                    retryAfter: ipLimit.retryAfter
+                },
+                { status: 429 }
+            );
+        }
+
+        // 2. Per-user + IP rate limit (prevents brute-force on a specific account)
+        const userIpKey = `user_${ip}_${cleanUsername.toLowerCase()}`;
+        const userLimit = checkRateLimit(userIpKey, MAX_LOGIN_ATTEMPTS_PER_USER);
+        if (!userLimit.allowed) {
+            return NextResponse.json(
+                {
+                    error: `Çok fazla başarısız giriş denemesi. ${userLimit.retryAfter} saniye sonra tekrar deneyin.`,
+                    retryAfter: userLimit.retryAfter
                 },
                 { status: 429 }
             );
         }
 
         const admin = await prisma.admin.findUnique({
-            where: { username },
+            where: { username: cleanUsername },
         });
 
         if (!admin) {
+            // Generic error — don't reveal whether username exists
             return NextResponse.json(
-                { error: "Invalid credentials", remainingAttempts: rateLimit.remainingAttempts },
+                { error: "Kullanıcı adı veya şifre hatalı.", remainingAttempts: userLimit.remainingAttempts },
                 { status: 401 }
             );
         }
 
-        const isPasswordValid = await bcrypt.compare(password, admin.passwordHash);
+        const isPasswordValid = await bcrypt.compare(cleanPassword, admin.passwordHash);
 
         if (!isPasswordValid) {
             return NextResponse.json(
-                { error: "Invalid credentials", remainingAttempts: rateLimit.remainingAttempts },
+                { error: "Kullanıcı adı veya şifre hatalı.", remainingAttempts: userLimit.remainingAttempts },
                 { status: 401 }
             );
         }
 
-        // Successful login - reset rate limit for this user
-        resetLoginAttempts(username);
+        // Successful login - reset rate limits
+        resetLoginAttempts(userIpKey);
+        resetLoginAttempts(`ip_${ip}`);
 
         await login({ id: admin.id, username: admin.username });
 
@@ -91,7 +133,7 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error("Login error:", error);
         return NextResponse.json(
-            { error: "Internal server error" },
+            { error: "Sunucu hatası oluştu." },
             { status: 500 }
         );
     }
