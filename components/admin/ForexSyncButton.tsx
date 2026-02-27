@@ -12,7 +12,7 @@ export default function ForexSyncButton() {
         setLoading(true);
         setMessage(null);
         try {
-            const res = await syncProductPrices();
+            const res = await syncProductPrices(undefined, true);
             if (res.success) {
                 setMessage({ text: res.message, type: "success" });
             } else {
