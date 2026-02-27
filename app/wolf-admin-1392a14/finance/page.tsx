@@ -5,13 +5,15 @@ import { FileText, Clock, CheckCircle, XCircle, Eye, Trash2, Search, Filter, Sma
 
 interface FinanceApplication {
     id: number;
-    name: string;
+    fullName: string;
     phone: string;
     email: string | null;
     deviceType: string;
     brandModel: string;
-    estimatedValue: string | null;
+    deviceCondition: string | null;
+    requestedAmount: number | null;
     message: string | null;
+    images: string[];
     status: string;
     adminNotes: string | null;
     createdAt: string;
@@ -96,7 +98,7 @@ export default function FinanceApplicationsPage() {
     };
 
     const filteredApps = applications.filter(app =>
-        app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.phone.includes(searchTerm) ||
         app.brandModel.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -187,7 +189,7 @@ export default function FinanceApplicationsPage() {
                             {filteredApps.map((app) => (
                                 <tr key={app.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4">
-                                        <div className="font-medium">{app.name}</div>
+                                        <div className="font-medium">{app.fullName}</div>
                                         <div className="text-sm text-gray-400 md:hidden">{app.phone}</div>
                                     </td>
                                     <td className="p-4">
@@ -246,7 +248,7 @@ export default function FinanceApplicationsPage() {
                     <div className="bg-[#1a1a1a] p-8 rounded-2xl w-full max-w-lg border border-white/10 max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h2 className="text-2xl font-bold">{selectedApp.name}</h2>
+                                <h2 className="text-2xl font-bold">{selectedApp.fullName}</h2>
                                 <p className="text-gray-400">{selectedApp.phone}</p>
                             </div>
                             <span className={`px-3 py-1 rounded-lg text-sm border ${statusColors[selectedApp.status]}`}>
@@ -263,10 +265,30 @@ export default function FinanceApplicationsPage() {
                                 </div>
                             </div>
 
-                            {selectedApp.estimatedValue && (
+                            {selectedApp.requestedAmount && (
                                 <div className="bg-white/5 p-4 rounded-xl">
-                                    <div className="text-gray-400 text-sm mb-1">Tahmini Değer</div>
-                                    <div className="font-medium text-green-400">₺{selectedApp.estimatedValue}</div>
+                                    <div className="text-gray-400 text-sm mb-1">Talep Edilen Tutar</div>
+                                    <div className="font-medium text-green-400">₺{Number(selectedApp.requestedAmount).toLocaleString('tr-TR')}</div>
+                                </div>
+                            )}
+
+                            {selectedApp.deviceCondition && (
+                                <div className="bg-white/5 p-4 rounded-xl">
+                                    <div className="text-gray-400 text-sm mb-1">Cihaz Durumu</div>
+                                    <div className="font-medium">{selectedApp.deviceCondition}</div>
+                                </div>
+                            )}
+
+                            {selectedApp.images && selectedApp.images.length > 0 && (
+                                <div className="bg-white/5 p-4 rounded-xl">
+                                    <div className="text-gray-400 text-sm mb-2">Fotoğraflar</div>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {selectedApp.images.map((img, i) => (
+                                            <a key={i} href={img} target="_blank" rel="noopener noreferrer">
+                                                <img src={img} alt={`Foto ${i + 1}`} className="w-full h-20 object-cover rounded-lg border border-white/10 hover:border-blue-500/50 transition-colors" />
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 

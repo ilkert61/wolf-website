@@ -18,8 +18,7 @@ export async function GET(request: Request) {
             whereClause.status = status;
         }
 
-        // @ts-ignore replacement
-        const applications = await prisma.financeApplication.findMany({
+        const applications = await prisma.financeRequest.findMany({
             where: whereClause,
             orderBy: { createdAt: "desc" },
         });
@@ -38,9 +37,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, phone, email, deviceType, brandModel, estimatedValue, message } = body;
+        const { fullName, phone, email, deviceType, brandModel, deviceCondition, requestedAmount, message } = body;
 
-        if (!name || !phone || !deviceType || !brandModel) {
+        if (!fullName || !phone || !deviceType || !brandModel) {
             return NextResponse.json(
                 { error: "Required fields missing" },
                 { status: 400 }
@@ -53,22 +52,22 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
         }
 
-        // Basic phone validation (digits, spaces, plus, dashes, parens, min 10 chars)
         const phoneRegex = /^[\d\s\+\-\(\)]{10,}$/;
         if (!phoneRegex.test(phone)) {
             return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 });
         }
 
-        // @ts-ignore
-        const application = await prisma.financeApplication.create({
+        const application = await prisma.financeRequest.create({
             data: {
-                name,
+                fullName,
                 phone,
                 email: email || null,
                 deviceType,
                 brandModel,
-                estimatedValue: estimatedValue || null,
+                deviceCondition: deviceCondition || null,
+                requestedAmount: requestedAmount ? parseFloat(requestedAmount) : null,
                 message: message || null,
+                images: [],
                 status: "Beklemede",
             },
         });
