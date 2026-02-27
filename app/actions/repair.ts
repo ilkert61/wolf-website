@@ -4,37 +4,51 @@ import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { processAndSaveImage } from '@/lib/image-upload'
 
-export async function submitRepairRequest(formData: FormData) {
-    const fullName = formData.get('fullName') as string
-    const phone = formData.get('phone') as string
-    const email = formData.get('email') as string
-    const deviceType = formData.get('deviceType') as string
-    const brandModel = formData.get('brandModel') as string
-    const problemDescription = formData.get('problemDescription') as string
-    const mediaUrl = formData.get('mediaUrl') as string
+// ── Validation helpers ──
+const PHONE_REGEX = /^[\d\s\+\-\(\)]{10,15}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_TEXT_LENGTH = 500;
+const MAX_NAME_LENGTH = 100;
 
-    // Handle Photo Uploads
+function sanitize(str: string | null, maxLen: number): string {
+    if (!str) return '';
+    return String(str).trim().slice(0, maxLen);
+}
+
+export async function submitRepairRequest(formData: FormData) {
+    const fullName = sanitize(formData.get('fullName') as string, MAX_NAME_LENGTH);
+    const phone = sanitize(formData.get('phone') as string, 15);
+    const email = sanitize(formData.get('email') as string, MAX_NAME_LENGTH);
+    const deviceType = sanitize(formData.get('deviceType') as string, 50);
+    const brandModel = sanitize(formData.get('brandModel') as string, MAX_NAME_LENGTH);
+    const problemDescription = sanitize(formData.get('problemDescription') as string, MAX_TEXT_LENGTH);
+    const mediaUrl = sanitize(formData.get('mediaUrl') as string, MAX_TEXT_LENGTH);
+
+    // Validation
+    if (!fullName || !phone || !brandModel || !problemDescription) {
+        return { success: false, message: 'Lütfen zorunlu alanları doldurunuz.' }
+    }
+
+    if (!PHONE_REGEX.test(phone)) {
+        return { success: false, message: 'Geçerli bir telefon numarası giriniz.' }
+    }
+
+    if (email && !EMAIL_REGEX.test(email)) {
+        return { success: false, message: 'Geçerli bir e-posta adresi giriniz.' }
+    }
+
+    // Handle Photo Uploads (max 3)
     const photos = formData.getAll('photos') as File[]
     const photoPaths: string[] = []
 
-    for (const photo of photos) {
+    const validPhotos = photos.slice(0, 3); // Hard cap at 3
+    for (const photo of validPhotos) {
         if (photo instanceof File && photo.size > 0 && photo.name !== 'undefined') {
             const result = await processAndSaveImage(photo, 'repair')
             if (result.success && result.url) {
                 photoPaths.push(result.url)
             }
         }
-    }
-
-    // Combine mediaUrl logic (Video Link + Uploaded Photos)
-    // Now stored in a more structured way if needed, but keeping the string format for now as per schema "mediaUrl String?"
-    const finalMediaUrl = [
-        mediaUrl ? `Video: ${mediaUrl}` : null,
-        photoPaths.length > 0 ? `Fotos: ${photoPaths.join(', ')}` : null
-    ].filter(Boolean).join(' | ')
-
-    if (!fullName || !phone || !brandModel || !problemDescription) {
-        return { success: false, message: 'Lütfen zorunlu alanları doldurunuz.' }
     }
 
     try {

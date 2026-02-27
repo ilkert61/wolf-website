@@ -3,18 +3,20 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// TCMB or Free Currency API
+// ExchangeRate-API (Free Tier, Highly Reliable)
 export async function getLiveRates() {
     try {
         // Fetching USD to TRY
-        const usdRes = await fetch("https://api.frankfurter.app/latest?from=USD&to=TRY", { cache: 'no-store' });
+        const usdRes = await fetch("https://open.er-api.com/v6/latest/USD", { cache: 'no-store' });
         const usdData = await usdRes.json();
         const usdRate = usdData.rates.TRY;
 
         // Fetching EUR to TRY
-        const eurRes = await fetch("https://api.frankfurter.app/latest?from=EUR&to=TRY", { cache: 'no-store' });
+        const eurRes = await fetch("https://open.er-api.com/v6/latest/EUR", { cache: 'no-store' });
         const eurData = await eurRes.json();
         const eurRate = eurData.rates.TRY;
+
+        if (!usdRate || !eurRate) throw new Error("API rate parsing failed");
 
         return { USD: usdRate, EUR: eurRate, TRY: 1 };
     } catch (error) {
@@ -23,7 +25,7 @@ export async function getLiveRates() {
     }
 }
 
-export async function syncProductPrices(adminId?: number) {
+export async function syncProductPrices(adminId?: number, forceSync: boolean = false) {
     try {
         const rates = await getLiveRates();
         if (!rates) return { success: false, message: "Canlı döviz kurları çekilemedi. Bağlantıyı kontrol edin." };
@@ -55,8 +57,8 @@ export async function syncProductPrices(adminId?: number) {
             // Calculate percentage difference between the live rate and the rate last used to price the product
             const diff = Math.abs(liveRate - currentUsedRate) / currentUsedRate;
 
-            // If the difference exceeds our threshold (e.g., 10%) or it's the first time setting it
-            if (diff >= thresholdDec || !product.exchangeRateUsed) {
+            // If the difference exceeds our threshold (e.g., 10%) or it's the first time setting it or forceSync is true
+            if (forceSync || diff >= thresholdDec || !product.exchangeRateUsed) {
                 const oldPrice = Number(product.price);
                 const newPrice = Math.round(basePrice * liveRate); // Yuvarlanmış net fiyat
 
