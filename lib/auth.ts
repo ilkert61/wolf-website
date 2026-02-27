@@ -2,9 +2,10 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const SECRET_KEY = new TextEncoder().encode(
-    process.env.JWT_SECRET || "super-secret-key-change-this"
-);
+if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET ortam değişkeni tanımlı değil. .env dosyasına ekleyin.");
+}
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function signSession(payload: any) {
     return await new SignJWT(payload)

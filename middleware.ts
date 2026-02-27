@@ -2,26 +2,42 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifySession } from "@/lib/auth";
 
-// Basic In-Memory Rate Limiter (Edge compatible)
-// Note: In a heavily distributed serverless environment (like Vercel Edge), 
-// memory maps reset per instance. However, this is sufficient for basic spam mitigation.
+// ── Rate Limiter (Edge-compatible) ──
 interface RateLimit {
     count: number;
     resetTime: number;
 }
 const rateLimitMap = new Map<string, RateLimit>();
-const RATE_LIMIT_MAX = 5; // Max 5 requests
+const RATE_LIMIT_MAX = 10; // Max 10 requests per window
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 Minute
+const MAX_MAP_SIZE = 10000; // Hard cap on map entries to prevent memory issues
+
+// Sweep stale entries periodically
+let sweepCounter = 0;
+function sweepStaleEntries() {
+    sweepCounter++;
+    if (sweepCounter % 50 !== 0) return; // Run every 50 requests
+    const now = Date.now();
+    for (const [key, data] of rateLimitMap) {
+        if (now > data.resetTime) {
+            rateLimitMap.delete(key);
+        }
+    }
+    // Hard cap: if map exceeds limit, clear everything
+    if (rateLimitMap.size > MAX_MAP_SIZE) {
+        rateLimitMap.clear();
+    }
+}
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 1. IP Rate Limiting for API routes (Protection against spam/DDoS on forms)
+    // 1. IP Rate Limiting for API routes
     if (pathname.startsWith("/api/")) {
-        // Extract IP (Next.js automatically sets x-forwarded-for in prod)
-        const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
+        sweepStaleEntries();
 
-        // Use a composite key
+        const forwarded = request.headers.get("x-forwarded-for");
+        const ip = forwarded?.split(",")[0]?.trim() || "127.0.0.1";
         const key = `rl_${ip}_${pathname}`;
 
         const now = Date.now();
@@ -45,9 +61,10 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // 2. Protect Admin Routes
-    if (pathname.startsWith("/wolf-admin-1392a14")) {
-        if (pathname === "/wolf-admin-1392a14/login") {
+    // 2. Protect Admin Routes (case-insensitive)
+    const normalizedPath = pathname.toLowerCase();
+    if (normalizedPath.startsWith("/wolf-admin-1392a14")) {
+        if (normalizedPath === "/wolf-admin-1392a14/login") {
             return NextResponse.next();
         }
 
